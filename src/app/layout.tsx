@@ -1,12 +1,13 @@
 import { Inter } from 'next/font/google';
 import { ChakraProvider } from '@chakra-ui/react';
 import "./globals.css";
+import { Providers } from './providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-  title: 'JonaBot - Personal AI Assistant',
-  description: 'An AI assistant powered by OpenAI to help answer questions about Jonathan.',
+  title: 'JonaBot - Your Personal AI Assistant',
+  description: 'Chat with JonaBot to learn more about Jonathan and his work.',
 };
 
 export default function RootLayout({
@@ -17,9 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ChakraProvider>
-          {children}
-        </ChakraProvider>
+        <Providers>
+          <ChakraProvider>
+            {children}
+          </ChakraProvider>
+        </Providers>
       </body>
     </html>
   );

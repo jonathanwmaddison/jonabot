@@ -1,13 +1,18 @@
-import { Box, Container, Heading } from '@chakra-ui/react';
+import { ChatWindow } from './components/Chat/ChatWindow';
+import { Box, Heading, Text, Container } from '@chakra-ui/react';
 
 export default function Home() {
   return (
-    <Container maxW="container.xl" py={8}>
-      <Box textAlign="center">
-        <Heading as="h1" size="2xl">
-          JonaBot
+    <Box as="main" minH="100vh" py={8}>
+      <Container maxW="4xl" mb={8}>
+        <Heading as="h1" size="xl" mb={2} textAlign="center">
+          Welcome to JonaBot
         </Heading>
-      </Box>
-    </Container>
+        <Text textAlign="center" mb={8} color="gray.600">
+          Your personal AI assistant to learn more about Jonathan and his work.
+        </Text>
+      </Container>
+      <ChatWindow />
+    </Box>
   );
 }
