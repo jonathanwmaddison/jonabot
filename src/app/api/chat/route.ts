@@ -1,5 +1,5 @@
 import { OpenAIStream, StreamingTextResponse, MODELS } from '@/lib/openai';
-import { BASE_PROMPT } from '@/lib/basePrompt';
+import { getBasePrompt } from '@/lib/basePrompt';
 import { NextRequest } from 'next/server';
 
 export const runtime = 'edge';
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     }
 
     const finalMessages = [
-      { role: 'system', content: BASE_PROMPT },
+      { role: 'system', content: getBasePrompt() },
       ...userMessages,
     ];
 

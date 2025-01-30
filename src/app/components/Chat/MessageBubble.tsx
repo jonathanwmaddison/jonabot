@@ -143,6 +143,16 @@ export const MessageBubble = memo(function MessageBubble({ message }: MessagePro
                 code: ({ children }) => (
                   <CodeBlock isUser={isUser}>{children as string}</CodeBlock>
                 ),
+                ol: ({ children }) => (
+                  <Box as="ol" pl={8} mb={2}>
+                    {children}
+                  </Box>
+                ),
+                li: ({ children }) => (
+                  <Text as="li" mb={1}>
+                    {children}
+                  </Text>
+                ),
               }}
             >
               {message.content}
