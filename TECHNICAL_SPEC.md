@@ -82,25 +82,28 @@ Always maintain a friendly, professional tone.
 ### 4.1 Directory Structure
 ```
 my-jonabot-app/
-├── app/
-│   ├── layout.tsx          // Main layout
-│   ├── page.tsx            // Landing page or chat UI
-│   ├── api/
-│   │   ├── chat/
-│   │   │   └── route.ts    // Chat completion route (streaming)
-│   │   └── feedback/
-│   │       └── route.ts    // Feedback submission route
-│   └── components/
-│       ├── Chat/
-│       │   ├── ChatWindow.tsx
-│       │   ├── MessageList.tsx
-│       │   ├── InputArea.tsx
-│       │   └── StreamingText.tsx  // Renders streaming tokens
-│       └── ...
-└── lib/
-    ├── basePrompt.ts
-    ├── types.ts
-    └── openai.ts           // LLM utility
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx          // Main layout
+│   │   ├── page.tsx            // Landing page or chat UI
+│   │   └── api/
+│   │       ├── chat/
+│   │       │   └── route.ts    // Chat completion route (streaming)
+│   │       └── feedback/
+│   │           └── route.ts    // Feedback submission route
+│   ├── components/
+│   │   ├── Chat/
+│   │   │   ├── ChatWindow.tsx
+│   │   │   ├── MessageList.tsx
+│   │   │   ├── InputArea.tsx
+│   │   │   └── StreamingText.tsx  // Renders streaming tokens
+│   │   └── ...
+│   ├── lib/
+│   │   ├── basePrompt.ts
+│   │   ├── types.ts
+│   │   └── openai.ts           // LLM utility
+│   └── types/                  // Global TypeScript types
+└── ...
 ```
 
 ### 4.2 Route Handlers
