@@ -45,26 +45,34 @@ export default function ResumePage() {
     <Box position="relative" minH="100vh" py={8}>
       {/* Action Buttons */}
       <Box 
-        position="fixed" 
-        top={4} 
-        right={4}
+        position="absolute"
+        top={{ base: 2, md: 4 }}
+        right={{ base: 2, md: 4 }}
         display="flex"
         gap={2}
         className="no-print"
+        zIndex={1}
       >
         <Button
           onClick={handlePrint}
           leftIcon={<Download size={16} />}
           colorScheme="gray"
           variant="solid"
+          size={{ base: "sm", md: "md" }}
         >
           Download/Print
         </Button>
-
       </Box>
 
       {/* Resume Content */}
-      <Container maxW="4xl" bg={bg} p={8}>
+      <Container 
+        maxW="4xl" 
+        bg={bg} 
+        p={8}
+        position="relative"
+        overflow="visible"
+        height="auto"
+      >
         {/* Header */}
         <VStack mb={8} pb={3} borderBottom="2px" borderColor={headingColor}>
           <Heading as="h1" size="xl" color={headingColor} mb={2}>
@@ -175,14 +183,20 @@ export default function ResumePage() {
       <style jsx global>{`
         @media print {
           @page {
-            margin: 0.4in;
+            margin: 0.25in;
             size: letter;
           }
-          body {
-            print-color-adjust: exact;
+          html, body {
+            height: auto !important;
+            overflow: visible !important;
             -webkit-print-color-adjust: exact;
-            font-size: 0.9em;
-            line-height: 1.3;
+            print-color-adjust: exact;
+            font-size: 0.85em;
+            line-height: 1.2;
+          }
+          #__next {
+            height: auto !important;
+            overflow: visible !important;
           }
           .no-print {
             display: none !important;

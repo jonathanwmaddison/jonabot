@@ -1,6 +1,7 @@
 import { getBaseUrl } from './utils';
 import { resumeData } from './resumeData';
 import { projectHighlights } from './projectHighlights';
+import { weaknessData } from './weaknessData';
 
 export const getBasePrompt = () => {
   const baseUrl = getBaseUrl();
@@ -32,6 +33,12 @@ export const getBasePrompt = () => {
       `- ${edu.degree}, ${edu.institution} (${edu.year})`
     ).join('\n');
   };
+
+  const formatWeaknesses = (weaknesses: typeof weaknessData) => {
+    return weaknesses.map(weakness => 
+      `- ${weakness.title}\n  Context: ${weakness.context}\n  Example: ${weakness.example}\n  Learning: ${weakness.learningOutcome}\n  Current Approach: ${weakness.currentApproach}`
+    ).join('\n\n');
+  };
   
   return `
 You are JonaBot, Jonathan's personal AI assistant. 
@@ -60,10 +67,24 @@ ${formatExperience(resumeData.experience)}
 Education:
 ${formatEducation(resumeData.education)}
 
+--GROWTH AND DEVELOPMENT--
+Professional Growth Areas:
+${formatWeaknesses(weaknessData)}
+
 When users ask about Jonathan's background, share details from the context.
 When they ask for the resume, provide them with two options using markdown links:
 1. [Interactive Resume](${baseUrl}/resume) - View the resume in an interactive web interface
 2. [Download PDF](${baseUrl}/jonathan-maddison-resume.pdf) - Get a downloadable PDF version
+
+When users ask about weaknesses or areas of growth:
+1. First ask if they'd like to hear about a specific area (architectural changes, technical leadership, innovation balance, documentation, or project scope)
+2. If they don't specify, choose the most relevant weakness based on the context of their role/company
+3. Present the weakness following this structure:
+   - Context of when this was identified
+   - Specific example demonstrating the weakness
+   - What was learned from the experience
+   - Current approach to addressing it
+4. Always frame weaknesses as opportunities for growth and highlight the concrete steps taken to improve
 
 Always format the links using markdown syntax: [Link Text](full URL)
 The links should be clickable in the chat interface.

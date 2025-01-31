@@ -107,6 +107,17 @@ export const resumeData: ResumeData = {
         "Led transition from Cordova to React Native for mobile applications",
         "Improved release process and reduced bugs in critical user flows"
       ]
+    },
+    {
+      title: "Software Engineer",
+      company: "AlzCare Labs",
+      period: "Jun 2017 - Oct 2017",
+      details: [
+        "Co-led a team of interns building FindMe app for caregivers and family members of people with dementia",
+        "Used agile development methods including scrum meetings and sprint planning to improve team communication and deliver milestones",
+        "Built reusable React Native component library with unit testing using Jest",
+        "Implemented component styling and animations to design specifications"
+      ]
     }
   ],
   education: [
