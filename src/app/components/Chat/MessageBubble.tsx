@@ -110,24 +110,24 @@ export const MessageBubble = memo(function MessageBubble({ message }: MessagePro
         w="full"
         justify={isUser ? 'flex-end' : 'flex-start'}
       >
-        {!isUser && <Avatar role={message.role} size="md" />}
+        {!isUser && <Avatar role={message.role} size="sm" />}
         <MotionBox
-          maxW={{ base: '75%', md: '70%' }}
+          maxW={{ base: '85%', md: '70%' }}
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
         >
           <Box
             bg={bg}
             color={color}
-            px={4}
-            py={2}
+            px={{ base: 3, md: 4 }}
+            py={{ base: 1.5, md: 2 }}
             borderRadius="xl"
             borderTopLeftRadius={!isUser ? 'sm' : undefined}
             borderTopRightRadius={isUser ? 'sm' : undefined}
           >
             <ReactMarkdown
               components={{
-                p: ({ children }) => <Text mb={2}>{children}</Text>,
+                p: ({ children }) => <Text fontSize={{ base: "sm", md: "md" }} mb={2}>{children}</Text>,
                 a: ({ href, children }) => (
                   <Text
                     as="a"
@@ -136,6 +136,7 @@ export const MessageBubble = memo(function MessageBubble({ message }: MessagePro
                     textDecoration="underline"
                     target="_blank"
                     rel="noopener noreferrer"
+                    fontSize={{ base: "sm", md: "md" }}
                   >
                     {children}
                   </Text>
@@ -144,17 +145,17 @@ export const MessageBubble = memo(function MessageBubble({ message }: MessagePro
                   <CodeBlock isUser={isUser}>{children as string}</CodeBlock>
                 ),
                 ol: ({ children }) => (
-                  <Box as="ol" pl={8} mb={4}>
+                  <Box as="ol" pl={{ base: 6, md: 8 }} mb={4}>
                     {children}
                   </Box>
                 ),
                 ul: ({ children }) => (
-                  <Box as="ul" pl={8} mb={4}>
+                  <Box as="ul" pl={{ base: 6, md: 8 }} mb={4}>
                     {children}
                   </Box>
                 ),
                 li: ({ children }) => (
-                  <Text as="li" mb={3} sx={{
+                  <Text as="li" mb={3} fontSize={{ base: "sm", md: "md" }} sx={{
                     '&::marker': {
                       color: isUser ? 'white' : 'inherit',
                     }
@@ -168,7 +169,7 @@ export const MessageBubble = memo(function MessageBubble({ message }: MessagePro
             </ReactMarkdown>
           </Box>
         </MotionBox>
-        {isUser && <Avatar role={message.role} size="md" />}
+        {isUser && <Avatar role={message.role} size="sm" />}
       </HStack>
       <Box
         alignSelf={isUser ? 'flex-end' : 'flex-start'}

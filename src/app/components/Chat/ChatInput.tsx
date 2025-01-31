@@ -51,7 +51,7 @@ export function ChatInput({ onTypingChange, initialInput = '' }: ChatInputProps)
   };
 
   return (
-    <Box p={4} borderTop="1px" borderColor={borderColor}>
+    <Box p={{ base: 3, md: 4 }} borderTop="1px" borderColor={borderColor}>
       <HStack spacing={2}>
         <Textarea
           ref={textareaRef}
@@ -61,14 +61,20 @@ export function ChatInput({ onTypingChange, initialInput = '' }: ChatInputProps)
           size="sm"
           resize="none"
           rows={1}
-          minH="40px"
-          maxH="200px"
+          minH={{ base: "44px", md: "40px" }}
+          maxH={{ base: "160px", md: "200px" }}
           overflowY="auto"
           onKeyDown={handleKeyDown}
           isDisabled={isSubmitting}
           _focus={{
             borderColor: 'blue.500',
             boxShadow: 'none',
+          }}
+          sx={{
+            // Improve touch handling on mobile
+            '@media (hover: none)': {
+              fontSize: '16px', // Prevent iOS zoom
+            }
           }}
         />
         <IconButton
@@ -78,6 +84,9 @@ export function ChatInput({ onTypingChange, initialInput = '' }: ChatInputProps)
           onClick={handleSubmit}
           isDisabled={!input.trim() || isSubmitting}
           isLoading={isSubmitting}
+          size={{ base: "md", md: "sm" }}
+          minW={{ base: "44px", md: "32px" }}
+          height={{ base: "44px", md: "32px" }}
         />
       </HStack>
     </Box>

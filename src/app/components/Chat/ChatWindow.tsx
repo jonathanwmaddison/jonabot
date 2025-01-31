@@ -13,6 +13,8 @@ import {
   AlertTitle,
   AlertDescription,
   Button,
+  Grid,
+  GridItem,
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from './ChatContext';
@@ -29,7 +31,8 @@ export function ChatWindow() {
   const { messages, error, isInitializing, sendMessage } = useChat();
   const [isTyping, setIsTyping] = useState(false);
   const [input, setInput] = useState('');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
+  const isFirstLoad = useRef(true);
   const bg = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.100', 'gray.700');
 
@@ -42,43 +45,44 @@ export function ChatWindow() {
     }
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, isTyping]);
+    // Skip initial load
+    if (isFirstLoad.current) {
+      isFirstLoad.current = false;
+      return;
+    }
+
+    // Only scroll when a new message is added
+    if (lastMessageRef.current && messages.length > 0) {
+      lastMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [messages.length]);
 
   if (isInitializing) {
     return (
-      <Box w="full" h="calc(100vh - 40px)">
-        <Box 
-          h="full" 
-          bg={bg}
-          display="flex"
-          flexDirection="column"
-          position="relative"
-        >
-          <LoadingSkeleton />
-        </Box>
+      <Box
+        display="flex"
+        flexDirection="column"
+        minH={{ base: '100dvh', md: 'calc(100vh - 40px)' }}
+        bg={bg}
+      >
+        <LoadingSkeleton />
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box w="full" h="calc(100vh - 40px)">
-        <Box
-          h="full"
-          bg={bg}
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-          textAlign="center"
-          gap={4}
-        >
+      <Box
+        display="flex"
+        flexDirection="column"
+        minH={{ base: '100dvh', md: 'calc(100vh - 40px)' }}
+        bg={bg}
+        justifyContent="center"
+        alignItems="center"
+        textAlign="center"
+        gap={4}
+      >
           <Alert
             status="error"
             variant="subtle"
@@ -105,58 +109,59 @@ export function ChatWindow() {
             </Button>
           </Alert>
         </Box>
-      </Box>
     );
   }
 
   return (
-    <Box w="full" h="calc(100vh - 40px)">
-      <Box
-        h="full"
-        bg={bg}
-        display="flex"
-        flexDirection="column"
-      >
+    <Box
+      display="flex"
+      flexDirection="column"
+      minH={{ base: '100dvh', md: 'calc(100vh - 40px)' }}
+      bg={bg}
+    >
         <Box
           flex="1"
           overflowY="auto"
-          px={4}
+          px={{ base: 2, md: 4 }}
+          pb={{ base: "120px", md: "140px" }}
           css={{
             '&::-webkit-scrollbar': { width: '4px' },
             '&::-webkit-scrollbar-track': { background: 'transparent' },
             '&::-webkit-scrollbar-thumb': { background: 'gray.200' },
           }}
         >
-          <Box maxW="4xl" mx="auto" py={4}>
-            <AnimatePresence>
-              <MotionVStack spacing={4} align="stretch" w="full">
-                {messages.map((msg, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                  >
-                    <MessageBubble message={msg} />
-                  </motion.div>
-                ))}
-                {isTyping && (
-                  <Box alignSelf="flex-start">
-                    <TypingIndicator />
-                  </Box>
-                )}
-                <div ref={messagesEndRef} />
-              </MotionVStack>
-            </AnimatePresence>
+          <Box maxW="4xl" mx="auto" py={{ base: 2, md: 4 }}>
+            <VStack spacing={{ base: 2, md: 4 }} align="stretch" w="full">
+              {messages.map((msg, i) => (
+                <Box 
+                  key={i}
+                  ref={i === messages.length - 1 ? lastMessageRef : undefined}
+                >
+                  <MessageBubble message={msg} />
+                </Box>
+              ))}
+              {isTyping && (
+                <Box alignSelf="flex-start">
+                  <TypingIndicator />
+                </Box>
+              )}
+            </VStack>
           </Box>
         </Box>
-        <Box borderTop="1px solid" borderColor={borderColor}>
+        <Box
+          position="sticky"
+          bottom={0}
+          bg={bg}
+          borderTop="1px solid"
+          borderColor={borderColor}
+          boxShadow="0 -4px 6px -1px rgba(0, 0, 0, 0.1)"
+          pb={{ base: 'env(safe-area-inset-bottom)', md: 0 }}
+        >
           <Box maxW="4xl" mx="auto" w="full">
             <SuggestedPrompts onPromptClick={handlePromptClick} />
             <ChatInput onTypingChange={setIsTyping} initialInput={input} />
           </Box>
         </Box>
-      </Box>
     </Box>
   );
 } 

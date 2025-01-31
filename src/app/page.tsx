@@ -7,7 +7,7 @@ export default function Home() {
   const textColor = useColorModeValue('gray.600', 'gray.400');
   
   return (
-    <Box as="main" minH="100vh">
+    <Box as="main">
       <Text 
         fontSize="md" 
         color={textColor}
