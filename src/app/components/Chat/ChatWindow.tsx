@@ -31,7 +31,6 @@ const MotionVStack = motion(VStack);
 export function ChatWindow() {
   const { messages, error, isInitializing, sendMessage, isSnowing } = useChat();
   const [isTyping, setIsTyping] = useState(false);
-  const [input, setInput] = useState('');
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const isFirstLoad = useRef(true);
   const bg = useColorModeValue('white', 'gray.800');
@@ -139,7 +138,7 @@ export function ChatWindow() {
                   key={i}
                   ref={i === messages.length - 1 ? lastMessageRef : undefined}
                 >
-                  <MessageBubble message={msg} />
+                  <MessageBubble message={msg} isLast={i === messages.length - 1} />
                 </Box>
               ))}
               {isTyping && (
@@ -161,7 +160,7 @@ export function ChatWindow() {
         >
           <Box maxW="4xl" mx="auto" w="full">
             <SuggestedPrompts onPromptClick={handlePromptClick} />
-            <ChatInput onTypingChange={setIsTyping} initialInput={input} />
+            <ChatInput onTypingChange={setIsTyping} />
           </Box>
         </Box>
     </Box>

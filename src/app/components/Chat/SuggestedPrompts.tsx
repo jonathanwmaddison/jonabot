@@ -9,9 +9,7 @@ const SUGGESTED_PROMPTS = [
   { text: "Work experience", prompt: "What is Jonathan's work experience?" },
   { text: "Technical skills", prompt: "What are Jonathan's technical skills?" },
   { text: "Education", prompt: "What is Jonathan's educational background?" },
-  { text: "🌙 Dark mode", prompt: "switch to dark mode" },
-  { text: "☀️ Light mode", prompt: "switch to light mode" },
-  { text: "❄️ Make it snow", prompt: "make it snow" },
+  { text: "❓ Help", prompt: "/help" },
 ];
 
 export function SuggestedPrompts({ onPromptClick }: SuggestedPromptsProps) {

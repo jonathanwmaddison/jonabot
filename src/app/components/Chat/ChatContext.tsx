@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useReducer, useCallback, useEffect, useRef } from 'react';
 import { useToast, useColorMode } from '@chakra-ui/react';
+import { handleCommand } from '@/lib/commands';
 
 interface Message {
   role: string;
@@ -86,88 +87,39 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const sendMessage = useCallback(async (content: string) => {
     const timestamp = new Date();
     
-    // Handle theme commands
-    const darkModeCommands = ['dark mode', 'switch to dark mode', 'enable dark mode'];
-    const lightModeCommands = ['light mode', 'switch to light mode', 'enable light mode'];
-    const snowCommands = ['make it snow', 'let it snow', 'snow'];
-    const stopSnowCommands = ['stop snow', 'stop snowing', 'no more snow'];
-    
-    const normalizedContent = content.toLowerCase().trim();
-    
-    if (darkModeCommands.includes(normalizedContent)) {
-      setColorMode('dark');
-      dispatch({ 
-        type: 'ADD_MESSAGE', 
-        message: { role: 'user', content, timestamp } 
-      });
-      dispatch({
-        type: 'ADD_MESSAGE',
-        message: { 
-          role: 'assistant', 
-          content: 'I\'ve switched to dark mode for you! 🌙', 
-          timestamp: new Date() 
-        },
-      });
-      return;
-    }
-    
-    if (lightModeCommands.includes(normalizedContent)) {
-      setColorMode('light');
-      dispatch({ 
-        type: 'ADD_MESSAGE', 
-        message: { role: 'user', content, timestamp } 
-      });
-      dispatch({
-        type: 'ADD_MESSAGE',
-        message: { 
-          role: 'assistant', 
-          content: 'I\'ve switched to light mode for you! ☀️', 
-          timestamp: new Date() 
-        },
-      });
+    // Check for commands
+    const commandResponse = handleCommand(content, { dispatch, setColorMode, timestamp });
+    if (commandResponse) {
+      if (commandResponse.userMessage) {
+        dispatch({
+          type: 'ADD_MESSAGE',
+          message: {
+            role: 'user',
+            content: commandResponse.userMessage.content,
+            timestamp
+          }
+        });
+      }
+      
+      if (commandResponse.assistantMessage) {
+        dispatch({
+          type: 'ADD_MESSAGE',
+          message: {
+            role: 'assistant',
+            content: commandResponse.assistantMessage.content,
+            timestamp: new Date()
+          }
+        });
+      }
+      
+      if (commandResponse.action) {
+        commandResponse.action({ dispatch, setColorMode, timestamp });
+      }
+      
       return;
     }
 
-    if (snowCommands.includes(normalizedContent)) {
-      dispatch({ 
-        type: 'SET_SNOW',
-        isSnowing: true
-      });
-      dispatch({ 
-        type: 'ADD_MESSAGE', 
-        message: { role: 'user', content, timestamp } 
-      });
-      dispatch({
-        type: 'ADD_MESSAGE',
-        message: { 
-          role: 'assistant', 
-          content: 'Let it snow! ❄️✨ Type "stop snow" to make it stop.', 
-          timestamp: new Date() 
-        },
-      });
-      return;
-    }
-
-    if (stopSnowCommands.includes(normalizedContent)) {
-      dispatch({ 
-        type: 'SET_SNOW',
-        isSnowing: false
-      });
-      dispatch({ 
-        type: 'ADD_MESSAGE', 
-        message: { role: 'user', content, timestamp } 
-      });
-      dispatch({
-        type: 'ADD_MESSAGE',
-        message: { 
-          role: 'assistant', 
-          content: 'Stopped the snow! ☀️', 
-          timestamp: new Date() 
-        },
-      });
-      return;
-    }
-
+    // If no command matched, proceed with normal message handling
     dispatch({ 
       type: 'ADD_MESSAGE', 
       message: { role: 'user', content, timestamp } 
