@@ -31,6 +31,7 @@ export function ChatWindow() {
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const bg = useColorModeValue('white', 'gray.800');
+  const borderColor = useColorModeValue('gray.100', 'gray.700');
 
   const handlePromptClick = async (prompt: string) => {
     try {
@@ -149,7 +150,7 @@ export function ChatWindow() {
             </AnimatePresence>
           </Box>
         </Box>
-        <Box borderTop="1px solid" borderColor={useColorModeValue('gray.100', 'gray.700')}>
+        <Box borderTop="1px solid" borderColor={borderColor}>
           <Box maxW="4xl" mx="auto" w="full">
             <SuggestedPrompts onPromptClick={handlePromptClick} />
             <ChatInput onTypingChange={setIsTyping} initialInput={input} />

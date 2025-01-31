@@ -144,12 +144,21 @@ export const MessageBubble = memo(function MessageBubble({ message }: MessagePro
                   <CodeBlock isUser={isUser}>{children as string}</CodeBlock>
                 ),
                 ol: ({ children }) => (
-                  <Box as="ol" pl={8} mb={2}>
+                  <Box as="ol" pl={8} mb={4}>
+                    {children}
+                  </Box>
+                ),
+                ul: ({ children }) => (
+                  <Box as="ul" pl={8} mb={4}>
                     {children}
                   </Box>
                 ),
                 li: ({ children }) => (
-                  <Text as="li" mb={1}>
+                  <Text as="li" mb={3} sx={{
+                    '&::marker': {
+                      color: isUser ? 'white' : 'inherit',
+                    }
+                  }}>
                     {children}
                   </Text>
                 ),
