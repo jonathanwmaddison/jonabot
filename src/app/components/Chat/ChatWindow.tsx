@@ -21,14 +21,25 @@ import { MessageBubble } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import { FiRefreshCw } from 'react-icons/fi';
+import { SuggestedPrompts } from './SuggestedPrompts';
 
 const MotionVStack = motion(VStack);
 
 export function ChatWindow() {
-  const { messages, error, isInitializing } = useChat();
+  const { messages, error, isInitializing, sendMessage } = useChat();
   const [isTyping, setIsTyping] = useState(false);
+  const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const bg = useColorModeValue('white', 'gray.800');
+
+  const handlePromptClick = async (prompt: string) => {
+    try {
+      setIsTyping(true);
+      await sendMessage(prompt);
+    } finally {
+      setIsTyping(false);
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -131,7 +142,8 @@ export function ChatWindow() {
             </MotionVStack>
           </AnimatePresence>
         </CardBody>
-        <ChatInput onTypingChange={setIsTyping} />
+        <SuggestedPrompts onPromptClick={handlePromptClick} />
+        <ChatInput onTypingChange={setIsTyping} initialInput={input} />
       </Card>
     </Container>
   );

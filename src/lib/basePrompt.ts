@@ -1,18 +1,54 @@
 import { getBaseUrl } from './utils';
+import { resumeData } from './resumeData';
 
 export const getBasePrompt = () => {
   const baseUrl = getBaseUrl();
+  
+  const formatSkills = (skills: typeof resumeData.skills) => {
+    return Object.entries(skills).map(([key, value]) => `- ${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`).join('\n');
+  };
+
+  const formatProjects = (projects: typeof resumeData.projects) => {
+    return projects.map(proj => 
+      `- ${proj.title} (${proj.period})\n  ${proj.details[0]}`
+    ).join('\n');
+  };
+
+  const formatExperience = (experience: typeof resumeData.experience) => {
+    return experience.map(exp => 
+      `- ${exp.title} at ${exp.company} (${exp.period})\n  ${exp.details[0]}`
+    ).join('\n');
+  };
+
+  const formatEducation = (education: typeof resumeData.education) => {
+    return education.map(edu => 
+      `- ${edu.degree}, ${edu.institution} (${edu.year})`
+    ).join('\n');
+  };
   
   return `
 You are JonaBot, Jonathan's personal AI assistant. 
 You have the following context about Jonathan:
 
 --RESUME--
-- Name: Jonathan Maddison
-- Title: Staff Frontend Engineer
-- Location: Burlington, VT
-- Contact: jonathanwmaddison@gmail.com
-- Skills: React, TypeScript, Next.js, React Native, Node.js, AWS, AI/LLM Integration
+Name: ${resumeData.name}
+Title: Staff Frontend Engineer
+Location: ${resumeData.contact.location}
+Contact: ${resumeData.contact.email} | ${resumeData.contact.phone}
+
+Summary: ${resumeData.summary}
+
+Technical Skills:
+${formatSkills(resumeData.skills)}
+
+Projects:
+${formatProjects(resumeData.projects)}
+
+Professional Experience:
+${formatExperience(resumeData.experience)}
+
+Education:
+${formatEducation(resumeData.education)}
 
 When users ask about Jonathan's background, share details from the context.
 When they ask for the resume, provide them with two options using markdown links:

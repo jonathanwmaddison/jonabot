@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, KeyboardEvent } from 'react';
+import { useState, useRef, KeyboardEvent, useEffect } from 'react';
 import {
   Box,
   Textarea,
@@ -14,14 +14,19 @@ import { useChat } from './ChatContext';
 
 interface ChatInputProps {
   onTypingChange: (isTyping: boolean) => void;
+  initialInput?: string;
 }
 
-export function ChatInput({ onTypingChange }: ChatInputProps) {
-  const [input, setInput] = useState('');
+export function ChatInput({ onTypingChange, initialInput = '' }: ChatInputProps) {
+  const [input, setInput] = useState(initialInput);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { sendMessage } = useChat();
   const borderColor = useColorModeValue('gray.200', 'gray.600');
+
+  useEffect(() => {
+    setInput(initialInput);
+  }, [initialInput]);
 
   const handleSubmit = async () => {
     const trimmedInput = input.trim();
