@@ -51,100 +51,111 @@ export function ChatWindow() {
 
   if (isInitializing) {
     return (
-      <Container maxW="2xl" h="calc(100vh - 100px)" p={4}>
-        <Card h="full" bg={bg} shadow="xl">
-          <CardBody
-            display="flex"
-            flexDirection="column"
-            position="relative"
-          >
-            <LoadingSkeleton />
-          </CardBody>
-        </Card>
-      </Container>
+      <Box w="full" h="calc(100vh - 40px)">
+        <Box 
+          h="full" 
+          bg={bg}
+          display="flex"
+          flexDirection="column"
+          position="relative"
+        >
+          <LoadingSkeleton />
+        </Box>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <Container maxW="2xl" h="calc(100vh - 100px)" p={4}>
-        <Card h="full" bg={bg} shadow="xl">
-          <CardBody
-            display="flex"
+      <Box w="full" h="calc(100vh - 40px)">
+        <Box
+          h="full"
+          bg={bg}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          textAlign="center"
+          gap={4}
+        >
+          <Alert
+            status="error"
+            variant="subtle"
             flexDirection="column"
-            justifyContent="center"
             alignItems="center"
+            justifyContent="center"
             textAlign="center"
-            gap={4}
+            borderRadius="lg"
+            p={6}
           >
-            <Alert
-              status="error"
-              variant="subtle"
-              flexDirection="column"
-              alignItems="center"
-              justifyContent="center"
-              textAlign="center"
-              borderRadius="lg"
-              p={6}
+            <AlertIcon boxSize="40px" mr={0} />
+            <AlertTitle mt={4} mb={1} fontSize="lg">
+              Connection Error
+            </AlertTitle>
+            <AlertDescription maxWidth="sm">
+              {error}. Please try refreshing the page or try again later.
+            </AlertDescription>
+            <Button
+              leftIcon={<FiRefreshCw />}
+              mt={4}
+              onClick={() => window.location.reload()}
             >
-              <AlertIcon boxSize="40px" mr={0} />
-              <AlertTitle mt={4} mb={1} fontSize="lg">
-                Connection Error
-              </AlertTitle>
-              <AlertDescription maxWidth="sm">
-                {error}. Please try refreshing the page or try again later.
-              </AlertDescription>
-              <Button
-                leftIcon={<FiRefreshCw />}
-                mt={4}
-                onClick={() => window.location.reload()}
-              >
-                Refresh Page
-              </Button>
-            </Alert>
-          </CardBody>
-        </Card>
-      </Container>
+              Refresh Page
+            </Button>
+          </Alert>
+        </Box>
+      </Box>
     );
   }
 
   return (
-    <Container maxW="2xl" h="calc(100vh - 100px)" p={4}>
-      <Card h="full" bg={bg} shadow="xl">
-        <CardBody
-          display="flex"
-          flexDirection="column"
+    <Box w="full" h="calc(100vh - 40px)">
+      <Box
+        h="full"
+        bg={bg}
+        display="flex"
+        flexDirection="column"
+      >
+        <Box
+          flex="1"
           overflowY="auto"
+          px={4}
           css={{
             '&::-webkit-scrollbar': { width: '4px' },
             '&::-webkit-scrollbar-track': { background: 'transparent' },
             '&::-webkit-scrollbar-thumb': { background: 'gray.200' },
           }}
         >
-          <AnimatePresence>
-            <MotionVStack spacing={4} align="stretch" flex={1}>
-              {messages.map((msg, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                >
-                  <MessageBubble message={msg} />
-                </motion.div>
-              ))}
-              {isTyping && (
-                <Box alignSelf="flex-start">
-                  <TypingIndicator />
-                </Box>
-              )}
-              <div ref={messagesEndRef} />
-            </MotionVStack>
-          </AnimatePresence>
-        </CardBody>
-        <SuggestedPrompts onPromptClick={handlePromptClick} />
-        <ChatInput onTypingChange={setIsTyping} initialInput={input} />
-      </Card>
-    </Container>
+          <Box maxW="4xl" mx="auto" py={4}>
+            <AnimatePresence>
+              <MotionVStack spacing={4} align="stretch" w="full">
+                {messages.map((msg, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                  >
+                    <MessageBubble message={msg} />
+                  </motion.div>
+                ))}
+                {isTyping && (
+                  <Box alignSelf="flex-start">
+                    <TypingIndicator />
+                  </Box>
+                )}
+                <div ref={messagesEndRef} />
+              </MotionVStack>
+            </AnimatePresence>
+          </Box>
+        </Box>
+        <Box borderTop="1px solid" borderColor={useColorModeValue('gray.100', 'gray.700')}>
+          <Box maxW="4xl" mx="auto" w="full">
+            <SuggestedPrompts onPromptClick={handlePromptClick} />
+            <ChatInput onTypingChange={setIsTyping} initialInput={input} />
+          </Box>
+        </Box>
+      </Box>
+    </Box>
   );
 } 

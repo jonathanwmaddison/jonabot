@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
+import { createContext, useContext, useReducer, useCallback, useEffect, useRef } from 'react';
 import { useToast } from '@chakra-ui/react';
 
 interface Message {
@@ -31,10 +31,14 @@ const initialState: ChatState = {
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(chatReducer, initialState);
   const toast = useToast();
+  const isInitialized = useRef(false);
 
   // Simulate initialization delay and check API connection
   useEffect(() => {
     const checkConnection = async () => {
+      if (isInitialized.current) return;
+      isInitialized.current = true;
+      
       try {
         const response = await fetch('/api/chat', {
           method: 'POST',
@@ -50,13 +54,12 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           throw new Error('Failed to connect to chat service');
         }
 
-        // Add initial greeting message
         const timestamp = new Date();
         dispatch({
           type: 'ADD_MESSAGE',
           message: {
             role: 'assistant',
-            content: 'Hi! I\'m JonaBot. How can I help you today?',
+            content: 'Hi! 👋 I\'m JonaBot, your guide to Jonathan\'s professional journey. Feel free to ask me about his experience, projects, or skills - I\'m here to help!',
             timestamp,
           },
         });

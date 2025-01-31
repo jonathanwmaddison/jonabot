@@ -1,17 +1,23 @@
+'use client';
+
 import { ChatWindow } from './components/Chat/ChatWindow';
-import { Box, Heading, Text, Container } from '@chakra-ui/react';
+import { Box, Text, useColorModeValue } from '@chakra-ui/react';
 
 export default function Home() {
+  const textColor = useColorModeValue('gray.600', 'gray.400');
+  
   return (
-    <Box as="main" minH="100vh" py={8}>
-      <Container maxW="4xl" mb={8}>
-        <Heading as="h1" size="xl" mb={2} textAlign="center">
-          Welcome to JonaBot
-        </Heading>
-        <Text textAlign="center" mb={8} color="gray.600">
-          Your personal AI assistant to learn more about Jonathan and his work.
-        </Text>
-      </Container>
+    <Box as="main" minH="100vh">
+      <Text 
+        fontSize="md" 
+        color={textColor}
+        textAlign="center" 
+        py={2}
+        borderBottom="1px solid"
+        borderColor={useColorModeValue('gray.100', 'gray.700')}
+      >
+        Jonathan Maddison | AI Chat Assistant
+      </Text>
       <ChatWindow />
     </Box>
   );
