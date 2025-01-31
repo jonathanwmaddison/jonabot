@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useReducer, useCallback, useEffect, useRef } from 'react';
-import { useToast } from '@chakra-ui/react';
+import { useToast, useColorMode } from '@chakra-ui/react';
 
 interface Message {
   role: string;
@@ -13,6 +13,7 @@ interface ChatState {
   messages: Message[];
   isInitializing: boolean;
   error: string | null;
+  isSnowing: boolean;
 }
 
 interface ChatContextType extends ChatState {
@@ -26,12 +27,14 @@ const initialState: ChatState = {
   messages: [],
   isInitializing: true,
   error: null,
+  isSnowing: false,
 };
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(chatReducer, initialState);
   const toast = useToast();
   const isInitialized = useRef(false);
+  const { setColorMode } = useColorMode();
 
   // Simulate initialization delay and check API connection
   useEffect(() => {
@@ -82,6 +85,89 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   const sendMessage = useCallback(async (content: string) => {
     const timestamp = new Date();
+    
+    // Handle theme commands
+    const darkModeCommands = ['dark mode', 'switch to dark mode', 'enable dark mode'];
+    const lightModeCommands = ['light mode', 'switch to light mode', 'enable light mode'];
+    const snowCommands = ['make it snow', 'let it snow', 'snow'];
+    const stopSnowCommands = ['stop snow', 'stop snowing', 'no more snow'];
+    
+    const normalizedContent = content.toLowerCase().trim();
+    
+    if (darkModeCommands.includes(normalizedContent)) {
+      setColorMode('dark');
+      dispatch({ 
+        type: 'ADD_MESSAGE', 
+        message: { role: 'user', content, timestamp } 
+      });
+      dispatch({
+        type: 'ADD_MESSAGE',
+        message: { 
+          role: 'assistant', 
+          content: 'I\'ve switched to dark mode for you! 🌙', 
+          timestamp: new Date() 
+        },
+      });
+      return;
+    }
+    
+    if (lightModeCommands.includes(normalizedContent)) {
+      setColorMode('light');
+      dispatch({ 
+        type: 'ADD_MESSAGE', 
+        message: { role: 'user', content, timestamp } 
+      });
+      dispatch({
+        type: 'ADD_MESSAGE',
+        message: { 
+          role: 'assistant', 
+          content: 'I\'ve switched to light mode for you! ☀️', 
+          timestamp: new Date() 
+        },
+      });
+      return;
+    }
+
+    if (snowCommands.includes(normalizedContent)) {
+      dispatch({ 
+        type: 'SET_SNOW',
+        isSnowing: true
+      });
+      dispatch({ 
+        type: 'ADD_MESSAGE', 
+        message: { role: 'user', content, timestamp } 
+      });
+      dispatch({
+        type: 'ADD_MESSAGE',
+        message: { 
+          role: 'assistant', 
+          content: 'Let it snow! ❄️✨ Type "stop snow" to make it stop.', 
+          timestamp: new Date() 
+        },
+      });
+      return;
+    }
+
+    if (stopSnowCommands.includes(normalizedContent)) {
+      dispatch({ 
+        type: 'SET_SNOW',
+        isSnowing: false
+      });
+      dispatch({ 
+        type: 'ADD_MESSAGE', 
+        message: { role: 'user', content, timestamp } 
+      });
+      dispatch({
+        type: 'ADD_MESSAGE',
+        message: { 
+          role: 'assistant', 
+          content: 'Stopped the snow! ☀️', 
+          timestamp: new Date() 
+        },
+      });
+      return;
+    }
+
     dispatch({ 
       type: 'ADD_MESSAGE', 
       message: { role: 'user', content, timestamp } 
@@ -136,7 +222,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         isClosable: true,
       });
     }
-  }, [state.messages, toast]);
+  }, [state.messages, toast, setColorMode]);
 
   return (
     <ChatContext.Provider value={{ ...state, sendMessage, clearError }}>
@@ -158,7 +244,8 @@ type ChatAction =
   | { type: 'UPDATE_LAST_ASSISTANT_MESSAGE'; content: string }
   | { type: 'SET_ERROR'; error: string }
   | { type: 'CLEAR_ERROR' }
-  | { type: 'SET_INITIALIZED' };
+  | { type: 'SET_INITIALIZED' }
+  | { type: 'SET_SNOW'; isSnowing: boolean };
 
 function chatReducer(state: ChatState, action: ChatAction): ChatState {
   switch (action.type) {
@@ -184,6 +271,8 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       return { ...state, error: null };
     case 'SET_INITIALIZED':
       return { ...state, isInitializing: false };
+    case 'SET_SNOW':
+      return { ...state, isSnowing: action.isSnowing };
     default:
       return state;
   }

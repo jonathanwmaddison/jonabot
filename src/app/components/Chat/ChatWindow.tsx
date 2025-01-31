@@ -24,11 +24,12 @@ import { TypingIndicator } from './TypingIndicator';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import { FiRefreshCw } from 'react-icons/fi';
 import { SuggestedPrompts } from './SuggestedPrompts';
+import { Snow } from '../Snow';
 
 const MotionVStack = motion(VStack);
 
 export function ChatWindow() {
-  const { messages, error, isInitializing, sendMessage } = useChat();
+  const { messages, error, isInitializing, sendMessage, isSnowing } = useChat();
   const [isTyping, setIsTyping] = useState(false);
   const [input, setInput] = useState('');
   const lastMessageRef = useRef<HTMLDivElement>(null);
@@ -119,6 +120,7 @@ export function ChatWindow() {
       minH={{ base: '100dvh', md: 'calc(100vh - 40px)' }}
       bg={bg}
     >
+        <Snow isActive={isSnowing} />
         <Box
           flex="1"
           overflowY="auto"
