@@ -1,5 +1,6 @@
 import { getBaseUrl } from './utils';
 import { resumeData } from './resumeData';
+import { projectHighlights } from './projectHighlights';
 
 export const getBasePrompt = () => {
   const baseUrl = getBaseUrl();
@@ -12,6 +13,12 @@ export const getBasePrompt = () => {
     return projects.map(proj => 
       `- ${proj.title} (${proj.period})\n  ${proj.details[0]}`
     ).join('\n');
+  };
+
+  const formatHighlights = (highlights: typeof projectHighlights) => {
+    return highlights.map(proj => 
+      `- ${proj.title} (${proj.period})\n  Technologies: ${proj.technologies.join(', ')}\n  ${proj.details.map(detail => `  - ${detail}`).join('\n')}`
+    ).join('\n\n');
   };
 
   const formatExperience = (experience: typeof resumeData.experience) => {
@@ -41,7 +48,10 @@ Summary: ${resumeData.summary}
 Technical Skills:
 ${formatSkills(resumeData.skills)}
 
-Projects:
+Recent Project Highlights:
+${formatHighlights(projectHighlights)}
+
+Professional Projects:
 ${formatProjects(resumeData.projects)}
 
 Professional Experience:
