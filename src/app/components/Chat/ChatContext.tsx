@@ -3,6 +3,7 @@
 import { createContext, useContext, useReducer, useCallback, useEffect, useRef } from 'react';
 import { useToast, useColorMode } from '@chakra-ui/react';
 import { handleCommand } from '@/lib/commands';
+import { extractContactInfo } from '@/lib/utils';
 
 interface Message {
   role: string;
@@ -84,6 +85,19 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'CLEAR_ERROR' });
   }, []);
 
+  function isContactRequest(content: string): boolean {
+    const contactPhrases = [
+      /send.*email/i,
+      /send.*message/i,
+      /contact/i,
+      /get in touch/i,
+      /reach out/i,
+      /email.*you/i,
+      /message.*you/i,
+    ];
+    return contactPhrases.some(phrase => phrase.test(content));
+  }
+
   const sendMessage = useCallback(async (content: string) => {
     const timestamp = new Date();
     
@@ -119,7 +133,122 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // If no command matched, proceed with normal message handling
+    // Check if this is a contact info message
+    const lastMessage = state.messages[state.messages.length - 1];
+    const isAfterContactPrompt = lastMessage?.role === 'assistant' && 
+      lastMessage.content.includes("I'll help you send a message to Jonathan");
+    
+    // Check if this is either a follow-up to contact prompt or a new contact request
+    if (isAfterContactPrompt || isContactRequest(content)) {
+      console.log('Detected potential contact message');
+      const contactInfo = extractContactInfo(content);
+      console.log('Extracted contact info:', contactInfo);
+      
+      if (contactInfo) {
+        try {
+          console.log('Attempting to send contact email...');
+          const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(contactInfo),
+          });
+
+          console.log('Contact API response status:', response.status);
+          const responseData = await response.json();
+          console.log('Contact API response:', responseData);
+
+          if (!response.ok) {
+            if (response.status === 429) {
+              throw new Error('Rate limit exceeded');
+            }
+            throw new Error('Failed to send message');
+          }
+
+          dispatch({
+            type: 'ADD_MESSAGE',
+            message: {
+              role: 'user',
+              content,
+              timestamp,
+            },
+          });
+
+          dispatch({
+            type: 'ADD_MESSAGE',
+            message: {
+              role: 'assistant',
+              content: responseData.error || 'Thanks! I\'ve sent your message to Jonathan. He\'ll get back to you at the email address you provided.',
+              timestamp: new Date(),
+            },
+          });
+
+          return;
+        } catch (error: any) {
+          console.error('Contact API error:', error);
+          const errorMessage = error.message === 'Rate limit exceeded'
+            ? 'Sorry, you\'ve sent too many messages recently. Please try again later or reach out to Jonathan directly at jonathanwm84@gmail.com'
+            : 'Sorry, I encountered an error while trying to send your message. Please try again or reach out to Jonathan directly at jonathanwm84@gmail.com';
+          
+          dispatch({
+            type: 'ADD_MESSAGE',
+            message: {
+              role: 'assistant',
+              content: errorMessage,
+              timestamp: new Date(),
+            },
+          });
+          return;
+        }
+      } else if (!isAfterContactPrompt) {
+        // If this was a new contact request but we couldn't extract info, show the contact prompt
+        dispatch({
+          type: 'ADD_MESSAGE',
+          message: {
+            role: 'user',
+            content,
+            timestamp,
+          },
+        });
+        
+        dispatch({
+          type: 'ADD_MESSAGE',
+          message: {
+            role: 'assistant',
+            content: `I'll help you send a message to Jonathan! Please provide:
+1. Your name (optional)
+2. Your email address (so he can reply to you)
+3. Your message
+
+You can format it like this:
+\`\`\`
+Name: Your Name
+Email: your.email@example.com
+Message: Your message here
+\`\`\`
+
+Or just tell me naturally and I'll help format it!`,
+            timestamp: new Date(),
+          },
+        });
+        return;
+      } else {
+        console.log('No valid contact info found in message');
+        // Add a helpful response when contact info couldn't be extracted
+        dispatch({
+          type: 'ADD_MESSAGE',
+          message: {
+            role: 'assistant',
+            content: "I couldn't quite extract your contact information. Could you please format it like this?\n\n```\nName: Your Name\nEmail: your.email@example.com\nMessage: Your message here\n```\n\nOr make sure to include your email address in your message.",
+            timestamp: new Date(),
+          },
+        });
+        return;
+      }
+    }
+
+    // If no contact info found or not a contact message, proceed with normal message handling
     dispatch({ 
       type: 'ADD_MESSAGE', 
       message: { role: 'user', content, timestamp } 
@@ -174,7 +303,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         isClosable: true,
       });
     }
-  }, [state.messages, toast, setColorMode]);
+  }, [state.messages, dispatch, setColorMode, toast]);
 
   return (
     <ChatContext.Provider value={{ ...state, sendMessage, clearError }}>

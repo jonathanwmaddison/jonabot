@@ -47,7 +47,8 @@ const commands: Command[] = [
 • /pong - Play a game of Pong
 • /dark - Switch to dark mode
 • /light - Switch to light mode
-• /snow - Toggle snow effect`
+• /snow - Toggle snow effect
+• /contact - Send a message to Jonathan`
       }
     })
   },
@@ -107,6 +108,31 @@ const commands: Command[] = [
         const state = document.documentElement.dataset.isSnowing === 'true';
         dispatch({ type: 'SET_SNOW', isSnowing: !state });
         document.documentElement.dataset.isSnowing = (!state).toString();
+      }
+    })
+  },
+  {
+    name: 'contact',
+    description: 'Send a message to Jonathan',
+    aliases: ['/contact', 'contact', 'send message', 'send email', 'get in touch', 'reach out'],
+    handler: (content) => ({
+      userMessage: {
+        content
+      },
+      assistantMessage: {
+        content: `I'll help you send a message to Jonathan! Please provide:
+1. Your name (optional)
+2. Your email address (so he can reply to you)
+3. Your message
+
+You can format it like this:
+\`\`\`
+Name: Your Name
+Email: your.email@example.com
+Message: Your message here
+\`\`\`
+
+Or just tell me naturally and I'll help format it!`
       }
     })
   }

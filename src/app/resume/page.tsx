@@ -79,7 +79,7 @@ export default function ResumePage() {
             {resumeData.name}
           </Heading>
           <Text color={textColor}>
-            {resumeData.contact.location} | {resumeData.contact.phone} | {resumeData.contact.email}
+            {resumeData.contact.location} | {resumeData.contact.email}
           </Text>
         </VStack>
 

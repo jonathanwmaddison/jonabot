@@ -2,7 +2,6 @@ export interface ResumeData {
   name: string;
   contact: {
     location: string;
-    phone: string;
     email: string;
   };
   summary: string;
@@ -34,8 +33,7 @@ export const resumeData: ResumeData = {
   name: "JONATHAN MADDISON",
   contact: {
     location: "Burlington, VT",
-    phone: "(802) 734-1161",
-    email: "jonathanwmaddison@gmail.com"
+    email: "jonathanwm84@gmail.com"
   },
   summary: "Staff-level engineer specializing in scalable front-end systems and AI integration. Expert in React/React Native, microservices architecture, and cloud deployment. Track record of leading teams, mentoring developers, and delivering complex architectural changes while maintaining velocity.",
   skills: {
