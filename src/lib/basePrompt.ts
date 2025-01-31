@@ -56,7 +56,7 @@ You understand and can respond to the following commands:
 Name: ${resumeData.name}
 Title: Staff Frontend Engineer
 Location: ${resumeData.contact.location}
-Contact: ${resumeData.contact.email} | ${resumeData.contact.phone}
+Contact: ${resumeData.contact.email}
 
 Summary: ${resumeData.summary}
 

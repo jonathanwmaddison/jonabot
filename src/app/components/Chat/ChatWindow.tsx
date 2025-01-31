@@ -3,9 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import {
   VStack,
-  Card,
-  CardBody,
-  Container,
+
   useColorModeValue,
   Box,
   Alert,
@@ -13,20 +11,23 @@ import {
   AlertTitle,
   AlertDescription,
   Button,
-  Grid,
-  GridItem,
+
 } from '@chakra-ui/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useChat } from './ChatContext';
 import { ChatInput } from './ChatInput';
 import { MessageBubble } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
 import { LoadingSkeleton } from './LoadingSkeleton';
-import { FiRefreshCw } from 'react-icons/fi';
+import { RefreshCw } from 'lucide-react';
 import { SuggestedPrompts } from './SuggestedPrompts';
-import { Snow } from '../Snow';
+import dynamic from 'next/dynamic';
 
-const MotionVStack = motion(VStack);
+// Dynamically import Snow component
+const Snow = dynamic(() => import('../Snow').then(mod => ({ default: mod.Snow })), {
+  ssr: false
+});
+
 
 export function ChatWindow() {
   const { messages, error, isInitializing, sendMessage, isSnowing } = useChat();
@@ -101,7 +102,7 @@ export function ChatWindow() {
               {error}. Please try refreshing the page or try again later.
             </AlertDescription>
             <Button
-              leftIcon={<FiRefreshCw />}
+              leftIcon={<RefreshCw />}
               mt={4}
               onClick={() => window.location.reload()}
             >

@@ -16,6 +16,7 @@
     "@emotion/styled": "^11.11.0",
     "@radix-ui/react-slot": "^1.1.1",
     "@types/nodemailer": "^6.4.17",
+    "critters": "^0.0.23",
     "eventsource-parser": "^1.1.1",
     "framer-motion": "^10.18.0",
     "lucide-react": "^0.474.0",

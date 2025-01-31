@@ -10,7 +10,6 @@ import {
   IconButton,
   useClipboard,
   useToast,
-  Link,
   Modal,
   ModalOverlay,
   ModalContent,
