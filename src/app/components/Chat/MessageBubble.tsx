@@ -23,6 +23,8 @@ import ReactMarkdown from 'react-markdown';
 import { FiCopy, FiCheck } from 'react-icons/fi';
 import { Avatar } from './Avatar';
 import { Pong } from '../Games/Pong';
+import { ContactForm } from './ContactForm';
+import { useChat } from './ChatContext';
 
 const MotionBox = motion(Box);
 
@@ -100,6 +102,7 @@ function CodeBlock({ children, isUser }: { children: string; isUser: boolean }) 
 export const MessageBubble = memo(function MessageBubble({ message, isLast }: MessageProps) {
   const isUser = message.role === 'user';
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { sendMessage } = useChat();
   
   const bg = useColorModeValue(
     isUser ? 'blue.500' : 'gray.100',
@@ -114,6 +117,21 @@ export const MessageBubble = memo(function MessageBubble({ message, isLast }: Me
   const isPongCommand = message.role === 'user' && message.content.trim().toLowerCase() === '/pong';
   const isPongResponse = message.role === 'assistant' && message.content.includes('Click this message to start playing Pong!');
   const isClickablePong = isPongCommand || isPongResponse;
+
+  const isContactPrompt = message.role === 'assistant' && (
+    message.content.includes("Let's help you get in touch with Jonathan") ||
+    message.content.includes("I'll help you send a message to Jonathan")
+  );
+  
+  const handleContactSubmit = async (formData: { name?: string; email: string; message: string }) => {
+    const formattedMessage = `
+Name: ${formData.name || 'Anonymous'}
+Email: ${formData.email}
+Message: ${formData.message}
+    `.trim();
+    
+    await sendMessage(formattedMessage);
+  };
 
   return (
     <>
@@ -191,6 +209,14 @@ export const MessageBubble = memo(function MessageBubble({ message, isLast }: Me
               >
                 {message.content}
               </ReactMarkdown>
+              {isContactPrompt && (
+                <Box mt={4}>
+                  <ContactForm 
+                    onSubmit={handleContactSubmit}
+                    onCancel={() => sendMessage('cancel')}
+                  />
+                </Box>
+              )}
             </Box>
           </MotionBox>
           {isUser && <Avatar role={message.role} size="sm" />}
@@ -205,7 +231,7 @@ export const MessageBubble = memo(function MessageBubble({ message, isLast }: Me
               fontSize="xs"
               color={timeColor}
             >
-              {new Date(message.timestamp).toLocaleTimeString()}
+              {formatTime(message.timestamp)}
             </Text>
           )}
         </Box>

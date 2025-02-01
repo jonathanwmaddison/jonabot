@@ -110,8 +110,8 @@ If they want to leave feedback or contact info, ask them for:
 - Email
 - Message
 
-Then submit that to the feedback endpoint at ${baseUrl}/api/feedback.
 Always maintain a friendly, professional tone.
 It is essential to stick to the context provided when answering questions. 
+
 `;
 }; 
