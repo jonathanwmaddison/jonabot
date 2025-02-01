@@ -1,54 +1,79 @@
 import { createParser } from 'eventsource-parser';
+import type { ParsedEvent, ReconnectInterval } from 'eventsource-parser';
 
 export const MODELS = {
-  GPT_4: 'gpt-4',
-  GPT_3_5_TURBO: 'gpt-3.5-turbo',
+  GPT_4: 'gpt-4o',
 };
 
 interface OpenAIRequest {
   model: string;
-  messages: { role: string; content: string }[];
+  messages: Array<{ role: string; content: string }>;
   temperature?: number;
-  max_tokens?: number;
+  stream?: boolean;
+  functions?: Array<{
+    name: string;
+    description: string;
+    parameters: {
+      type: string;
+      properties: Record<string, any>;
+      required?: string[];
+    };
+  }>;
+  function_call?: "auto" | "none" | { name: string };
 }
 
-export async function OpenAIStream(options: OpenAIRequest) {
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY || ''}`,
-    },
-    body: JSON.stringify({ ...options, stream: true }),
-  });
-
-  if (!res.ok || !res.body) {
-    throw new Error(`OpenAI API Error: ${await res.text()}`);
-  }
-
+export async function OpenAIStream(payload: OpenAIRequest) {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ''}`,
+    },
+    method: 'POST',
+    body: JSON.stringify({ ...payload, stream: true }),
+  });
+
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
+
   const stream = new ReadableStream({
     async start(controller) {
-      const parser = createParser((event) => {
+      const onParse = (event: ParsedEvent | ReconnectInterval) => {
         if (event.type === 'event') {
           const data = event.data;
           if (data === '[DONE]') {
             controller.close();
             return;
           }
+          
           try {
             const json = JSON.parse(data);
-            const text = json.choices[0]?.delta?.content || '';
-            if (text) {
-              controller.enqueue(encoder.encode(text));
+            
+            // Handle function calls
+            if (json.choices[0].delta?.function_call) {
+              const chunk = encoder.encode(JSON.stringify({
+                function_call: json.choices[0].delta.function_call
+              }));
+              controller.enqueue(chunk);
+              return;
             }
-          } catch (err) {
-            controller.error(err);
+            
+            // Handle regular message content
+            const text = json.choices[0].delta?.content || '';
+            if (text) {
+              const queue = encoder.encode(text);
+              controller.enqueue(queue);
+            }
+          } catch (e) {
+            controller.error(e);
           }
         }
-      });
+      };
+
+      const parser = createParser(onParse);
 
       for await (const chunk of res.body as any) {
         parser.feed(decoder.decode(chunk));

@@ -8,6 +8,9 @@ import {
   HStack,
   useColorModeValue,
   Spinner,
+  InputGroup,
+  InputRightElement,
+  Button,
 } from '@chakra-ui/react';
 import { FiSend } from 'react-icons/fi';
 import { useChat } from './ChatContext';
@@ -15,40 +18,31 @@ import { CommandSuggestions } from './CommandSuggestions';
 import { AnimatePresence } from 'framer-motion';
 
 interface ChatInputProps {
-  onTypingChange: (isTyping: boolean) => void;
-  initialInput?: string;
+  onSubmit: (message: string) => void;
+  isDisabled?: boolean;
 }
 
-export function ChatInput({ onTypingChange, initialInput = '' }: ChatInputProps) {
-  const [input, setInput] = useState(initialInput);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export function ChatInput({ onSubmit, isDisabled }: ChatInputProps) {
+  const [input, setInput] = useState('');
   const [showCommands, setShowCommands] = useState(false);
   const [selectedCommandIndex, setSelectedCommandIndex] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { sendMessage } = useChat();
   const borderColor = useColorModeValue('gray.200', 'gray.600');
 
-  useEffect(() => {
-    setInput(initialInput);
-  }, [initialInput]);
-
-  const handleSubmit = async () => {
+  const handleSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
     const trimmedInput = input.trim();
-    if (!trimmedInput || isSubmitting) return;
+    if (!trimmedInput || isDisabled) return;
 
-    try {
-      setIsSubmitting(true);
-      onTypingChange(true);
-      setInput('');
-      setShowCommands(false);
-      await sendMessage(trimmedInput);
-    } finally {
-      setIsSubmitting(false);
-      onTypingChange(false);
+    onSubmit(trimmedInput);
+    setInput('');
+    setShowCommands(false);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (showCommands) {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
@@ -86,6 +80,11 @@ export function ChatInput({ onTypingChange, initialInput = '' }: ChatInputProps)
     } else if (!newValue.endsWith('/')) {
       setShowCommands(false);
     }
+
+    // Auto-resize
+    const textarea = e.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
   };
 
   const handleCommandSelect = (command: string) => {
@@ -95,7 +94,7 @@ export function ChatInput({ onTypingChange, initialInput = '' }: ChatInputProps)
   };
 
   return (
-    <Box p={{ base: 3, md: 4 }} borderTop="1px" borderColor={borderColor}>
+    <Box p={4} borderTop="1px" borderColor={borderColor}>
       <Box position="relative">
         <AnimatePresence>
           <CommandSuggestions
@@ -110,15 +109,15 @@ export function ChatInput({ onTypingChange, initialInput = '' }: ChatInputProps)
             ref={textareaRef}
             value={input}
             onChange={handleInputChange}
-            placeholder={isSubmitting ? 'Sending message...' : 'Type your message...'}
+            onKeyDown={handleKeyDown}
+            placeholder={isDisabled ? 'Sending message...' : 'Type your message...'}
             size="sm"
             resize="none"
             rows={1}
             minH={{ base: "44px", md: "40px" }}
             maxH={{ base: "160px", md: "200px" }}
             overflowY="auto"
-            onKeyDown={handleKeyDown}
-            isDisabled={isSubmitting}
+            disabled={isDisabled}
             _focus={{
               borderColor: 'blue.500',
               boxShadow: 'none',
@@ -132,11 +131,10 @@ export function ChatInput({ onTypingChange, initialInput = '' }: ChatInputProps)
           />
           <IconButton
             aria-label="Send message"
-            icon={isSubmitting ? <Spinner size="sm" /> : <FiSend />}
+            icon={isDisabled ? <Spinner size="sm" /> : <FiSend />}
             colorScheme="blue"
-            onClick={handleSubmit}
-            isDisabled={!input.trim() || isSubmitting}
-            isLoading={isSubmitting}
+            onClick={() => handleSubmit()}
+            isDisabled={!input.trim() || isDisabled}
             size={{ base: "md", md: "sm" }}
             minW={{ base: "44px", md: "32px" }}
             height={{ base: "44px", md: "32px" }}

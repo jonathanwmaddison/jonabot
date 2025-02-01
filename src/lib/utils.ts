@@ -1,20 +1,29 @@
-export function getBaseUrl() {
+export function getBaseUrl(req?: Request) {
+  // If we're in the browser, use relative path
   if (typeof window !== 'undefined') {
-    // Browser should use relative path
     return '';
   }
 
-  if (process.env.VERCEL_URL) {
-    // Reference for vercel.com
-    return `https://${process.env.VERCEL_URL}`;
+  // If a request is provided (server-side), try to derive the URL from headers
+  if (req) {
+    const forwardedProto = req.headers.get('x-forwarded-proto') || 'https';
+    const forwardedHost = req.headers.get('x-forwarded-host') || req.headers.get('host');
+    if (forwardedHost) {
+      return `${forwardedProto}://${forwardedHost}`;
+    }
   }
-
+  
+  // Otherwise, use the public environment variable if available
   if (process.env.NEXT_PUBLIC_APP_URL) {
-    // Reference for custom domain
     return process.env.NEXT_PUBLIC_APP_URL;
   }
-
-  // Assume localhost
+  
+  // Fallback: use Vercel's environment variable (not ideal for public links)
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  
+  // Default to localhost
   return `http://localhost:${process.env.PORT || 3000}`;
 }
 

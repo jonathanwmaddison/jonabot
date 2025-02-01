@@ -3,9 +3,9 @@ import { getBaseUrl } from '@/lib/utils';
 
 export const runtime = 'edge';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const baseUrl = getBaseUrl();
+    const baseUrl = getBaseUrl(req);
     
     // Return links to both formats
     return NextResponse.json({

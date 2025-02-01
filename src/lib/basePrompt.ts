@@ -3,8 +3,8 @@ import { resumeData } from './resumeData';
 import { projectHighlights } from './projectHighlights';
 import { weaknessData } from './weaknessData';
 
-export const getBasePrompt = () => {
-  const baseUrl = getBaseUrl();
+export const getBasePrompt = (req?: Request) => {
+  const baseUrl = getBaseUrl(req);
   
   const formatSkills = (skills: typeof resumeData.skills) => {
     return Object.entries(skills).map(([key, value]) => `- ${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`).join('\n');
