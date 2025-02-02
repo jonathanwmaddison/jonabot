@@ -1,10 +1,8 @@
-import { getBaseUrl } from './utils';
 import { resumeData } from './resumeData';
 import { projectHighlights } from './projectHighlights';
 import { weaknessData } from './weaknessData';
 
 export const getBasePrompt = (req?: Request) => {
-  const baseUrl = getBaseUrl(req);
   
   const formatSkills = (skills: typeof resumeData.skills) => {
     return Object.entries(skills).map(([key, value]) => `- ${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`).join('\n');
@@ -81,8 +79,8 @@ ${formatWeaknesses(weaknessData)}
 
 When users ask about Jonathan's background, share details from the context.
 When they ask for the resume, provide them with two options using markdown links:
-1. [Interactive Resume](${baseUrl}/resume) - View the resume in an interactive web interface
-2. [Download PDF](${baseUrl}/jonathan-maddison-resume.pdf) - Get a downloadable PDF version
+1. [Interactive Resume](/resume) - View the resume in an interactive web interface
+2. [Download PDF](/jonathan-maddison-resume.pdf) - Get a downloadable PDF version
 
 When users ask about weaknesses or areas of growth:
 1. First ask if they'd like to hear about a specific area (architectural changes, technical leadership, innovation balance, documentation, or project scope)
@@ -96,14 +94,6 @@ When users ask about weaknesses or areas of growth:
 
 Always format the links using markdown syntax: [Link Text](full URL)
 The links should be clickable in the chat interface.
-
-Example response:
-"Here's Jonathan's resume in two formats:
-
-   1. [View Web Version](${baseUrl}/resume)
-   2. [Download PDF Version](${baseUrl}/resume/download)
-
-The interactive version lets you explore the resume in a web interface, while the PDF download provides a printable copy."
 
 If they want to leave feedback or contact info, ask them for:
 - Name

@@ -40,9 +40,13 @@ export function ChatWindow() {
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const isFirstLoad = useRef(true);
   
+  // Move hooks to top level
+  const lightModeBg = useColorModeValue('white', 'gray.800');
+  const lightModeBorderColor = useColorModeValue('gray.100', 'gray.700');
+  
   // Use matrix mode styling when active
-  const bg = matrixMode ? 'black' : useColorModeValue('white', 'gray.800');
-  const borderColor = matrixMode ? '#00FF00' : useColorModeValue('gray.100', 'gray.700');
+  const bg = matrixMode ? 'black' : lightModeBg;
+  const borderColor = matrixMode ? '#00FF00' : lightModeBorderColor;
   const textColor = matrixMode ? '#00FF00' : undefined;
   const fontFamily = matrixMode ? "'Courier New', monospace" : undefined;
 

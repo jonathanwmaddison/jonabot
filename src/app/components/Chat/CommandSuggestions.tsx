@@ -27,10 +27,16 @@ interface CommandSuggestionsProps {
 }
 
 export function CommandSuggestions({ isOpen, filter, onSelect, selectedIndex, matrixMode = false }: CommandSuggestionsProps) {
-  const bg = matrixMode ? 'black' : useColorModeValue('white', 'gray.800');
-  const hoverBg = matrixMode ? '#003300' : useColorModeValue('gray.50', 'gray.700');
-  const borderColor = matrixMode ? '#00FF00' : useColorModeValue('gray.200', 'gray.600');
-  const selectedBg = matrixMode ? '#004400' : useColorModeValue('blue.50', 'blue.900');
+  // Move hooks to top level
+  const lightModeBg = useColorModeValue('white', 'gray.800');
+  const lightModeHoverBg = useColorModeValue('gray.50', 'gray.700');
+  const lightModeBorderColor = useColorModeValue('gray.200', 'gray.600');
+  const lightModeSelectedBg = useColorModeValue('blue.50', 'blue.900');
+  
+  const bg = matrixMode ? 'black' : lightModeBg;
+  const hoverBg = matrixMode ? '#003300' : lightModeHoverBg;
+  const borderColor = matrixMode ? '#00FF00' : lightModeBorderColor;
+  const selectedBg = matrixMode ? '#004400' : lightModeSelectedBg;
   const textColor = matrixMode ? '#00FF00' : undefined;
   const descriptionColor = matrixMode ? '#00AA00' : 'gray.500';
 

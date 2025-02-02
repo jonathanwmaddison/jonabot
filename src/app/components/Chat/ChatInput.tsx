@@ -29,8 +29,11 @@ export function ChatInput({ onSubmit, isDisabled, matrixMode = false }: ChatInpu
   const [selectedCommandIndex, setSelectedCommandIndex] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
+  // Move hook to top level
+  const lightModeBorderColor = useColorModeValue('gray.200', 'gray.600');
+  
   // Use matrix mode styling when active
-  const borderColor = matrixMode ? '#00FF00' : useColorModeValue('gray.200', 'gray.600');
+  const borderColor = matrixMode ? '#00FF00' : lightModeBorderColor;
   const bg = matrixMode ? 'black' : undefined;
   const color = matrixMode ? '#00FF00' : undefined;
   const placeholderColor = matrixMode ? '#00FF00' : undefined;

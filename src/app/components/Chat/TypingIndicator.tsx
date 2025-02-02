@@ -10,7 +10,8 @@ interface TypingIndicatorProps {
 }
 
 export function TypingIndicator({ matrixMode = false }: TypingIndicatorProps) {
-  const dotColor = matrixMode ? '#00FF00' : useColorModeValue('gray.400', 'gray.500');
+  const lightModeDotColor = useColorModeValue('gray.400', 'gray.500');
+  const dotColor = matrixMode ? '#00FF00' : lightModeDotColor;
 
   return (
     <HStack spacing={2} p={4}>

@@ -1,18 +1,15 @@
 import { NextResponse } from 'next/server';
-import { getBaseUrl } from '@/lib/utils';
 
 export const runtime = 'edge';
 
 export async function GET(req: Request) {
   try {
-    const baseUrl = getBaseUrl(req);
-    
-    // Return links to both formats
+    // Return links to both formats using relative URLs
     return NextResponse.json({
       message: "View or download Jonathan's resume",
       links: {
-        interactive: `${baseUrl}/resume`,
-        pdf: `${baseUrl}/jonathan-maddison-resume.pdf`
+        interactive: '/resume',
+        pdf: '/jonathan-maddison-resume.pdf'
       }
     });
   } catch (error) {

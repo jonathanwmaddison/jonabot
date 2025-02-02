@@ -14,8 +14,12 @@ const SUGGESTED_PROMPTS = [
 ];
 
 export function SuggestedPrompts({ onPromptClick, matrixMode = false }: SuggestedPromptsProps) {
-  const buttonBg = matrixMode ? 'black' : useColorModeValue('gray.100', 'gray.700');
-  const buttonHoverBg = matrixMode ? '#003300' : useColorModeValue('gray.200', 'gray.600');
+  // Move hooks to top level
+  const lightModeBg = useColorModeValue('gray.100', 'gray.700');
+  const lightModeHoverBg = useColorModeValue('gray.200', 'gray.600');
+  
+  const buttonBg = matrixMode ? 'black' : lightModeBg;
+  const buttonHoverBg = matrixMode ? '#003300' : lightModeHoverBg;
   const buttonColor = matrixMode ? '#00FF00' : undefined;
   const buttonBorder = matrixMode ? '1px solid #00FF00' : undefined;
 
