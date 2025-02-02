@@ -10,6 +10,7 @@ interface Command {
 
 const COMMANDS: Command[] = [
   { name: '/help', description: 'Show available commands' },
+  { name: '/contact', description: 'Contact Jonathan' },
   { name: '/pong', description: 'Play a game of Pong' },
   { name: '/dark', description: 'Switch to dark mode' },
   { name: '/light', description: 'Switch to light mode' },

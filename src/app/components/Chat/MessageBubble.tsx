@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import {
   Box,
   Text,
@@ -123,14 +123,23 @@ export const MessageBubble = memo(function MessageBubble({ message, isLast }: Me
     message.content.includes("I'll help you send a message to Jonathan")
   );
   
+  const [showForm, setShowForm] = useState(true);
+  
   const handleContactSubmit = async (formData: { name?: string; email: string; message: string }) => {
-    const formattedMessage = `
-Name: ${formData.name || 'Anonymous'}
-Email: ${formData.email}
-Message: ${formData.message}
-    `.trim();
+    const response = await fetch('/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || 'Failed to send message');
+    }
     
-    await sendMessage(formattedMessage);
+    setShowForm(false);
   };
 
   return (
@@ -209,13 +218,18 @@ Message: ${formData.message}
               >
                 {message.content}
               </ReactMarkdown>
-              {isContactPrompt && (
+              {isContactPrompt && showForm && (
                 <Box mt={4}>
                   <ContactForm 
                     onSubmit={handleContactSubmit}
-                    onCancel={() => sendMessage('cancel')}
+                    onCancel={() => setShowForm(false)}
                   />
                 </Box>
+              )}
+              {isContactPrompt && !showForm && (
+                <Text fontSize="sm" color="green.500" mt={2}>
+                  Message sent successfully! Jonathan will get back to you soon.
+                </Text>
               )}
             </Box>
           </MotionBox>
