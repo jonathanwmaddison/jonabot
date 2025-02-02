@@ -46,7 +46,7 @@ export const resumeData: ResumeData = {
   projects: [
     {
       title: "Advanced AI Integration Projects",
-      period: "2024 - Present",
+      period: "June 2024 - Present",
       details: [
         "Built React Native app integrating billion-parameter LLMs (Llama 3.2) locally on iOS devices",
         "Implemented RAG systems for semantic search and data analysis in government transcripts",
@@ -59,7 +59,7 @@ export const resumeData: ResumeData = {
     {
       title: "Staff Frontend Engineer",
       company: "Paige",
-      period: "2024",
+      period: "2024 - June 2024",
       companyDescription: "AI-powered digital pathology and cancer diagnostics company revolutionizing clinical diagnosis and treatment in oncology",
       details: [
         "Led team building AI-integrated digital pathology viewer in regulated medical environment",
