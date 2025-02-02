@@ -6,7 +6,7 @@ interface SuggestedPromptsProps {
 }
 
 const SUGGESTED_PROMPTS = [
-  { text: "Get Jonathan's resume", prompt: "Can you show me Jonathan's resume?" },
+  { text: "Jonathan's resume", prompt: "Can you show me Jonathan's resume?" },
   { text: "Work experience", prompt: "What is Jonathan's work experience?" },
   { text: "Technical skills", prompt: "What are Jonathan's technical skills?" },
   { text: "Education", prompt: "What is Jonathan's educational background?" },
