@@ -20,14 +20,20 @@ import { AnimatePresence } from 'framer-motion';
 interface ChatInputProps {
   onSubmit: (message: string) => void;
   isDisabled?: boolean;
+  matrixMode?: boolean;
 }
 
-export function ChatInput({ onSubmit, isDisabled }: ChatInputProps) {
+export function ChatInput({ onSubmit, isDisabled, matrixMode = false }: ChatInputProps) {
   const [input, setInput] = useState('');
   const [showCommands, setShowCommands] = useState(false);
   const [selectedCommandIndex, setSelectedCommandIndex] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
+  
+  // Use matrix mode styling when active
+  const borderColor = matrixMode ? '#00FF00' : useColorModeValue('gray.200', 'gray.600');
+  const bg = matrixMode ? 'black' : undefined;
+  const color = matrixMode ? '#00FF00' : undefined;
+  const placeholderColor = matrixMode ? '#00FF00' : undefined;
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -102,6 +108,7 @@ export function ChatInput({ onSubmit, isDisabled }: ChatInputProps) {
             filter={input.slice(input.lastIndexOf('/') + 1)}
             onSelect={handleCommandSelect}
             selectedIndex={selectedCommandIndex}
+            matrixMode={matrixMode}
           />
         </AnimatePresence>
         <HStack spacing={2}>
@@ -118,8 +125,12 @@ export function ChatInput({ onSubmit, isDisabled }: ChatInputProps) {
             maxH={{ base: "160px", md: "200px" }}
             overflowY="auto"
             disabled={isDisabled}
+            bg={bg}
+            color={color}
+            borderColor={borderColor}
+            _placeholder={{ color: placeholderColor }}
             _focus={{
-              borderColor: 'blue.500',
+              borderColor: matrixMode ? '#00FF00' : 'blue.500',
               boxShadow: 'none',
             }}
             sx={{
@@ -132,12 +143,18 @@ export function ChatInput({ onSubmit, isDisabled }: ChatInputProps) {
           <IconButton
             aria-label="Send message"
             icon={isDisabled ? <Spinner size="sm" /> : <FiSend />}
-            colorScheme="blue"
+            colorScheme={matrixMode ? 'green' : 'blue'}
             onClick={() => handleSubmit()}
             isDisabled={!input.trim() || isDisabled}
             size={{ base: "md", md: "sm" }}
             minW={{ base: "44px", md: "32px" }}
             height={{ base: "44px", md: "32px" }}
+            bg={matrixMode ? 'black' : undefined}
+            color={matrixMode ? '#00FF00' : undefined}
+            borderColor={matrixMode ? '#00FF00' : undefined}
+            _hover={matrixMode ? {
+              bg: '#003300'
+            } : undefined}
           />
         </HStack>
       </Box>

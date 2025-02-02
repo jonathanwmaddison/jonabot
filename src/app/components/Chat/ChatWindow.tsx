@@ -22,6 +22,7 @@ import { RefreshCw } from 'lucide-react';
 import { SuggestedPrompts } from './SuggestedPrompts';
 import dynamic from 'next/dynamic';
 import { handleCommand } from '@/lib/commandHandler';
+import { MatrixRain } from '../MatrixRain';
 
 // Dynamically import Snow component
 const Snow = dynamic(() => import('../Snow').then(mod => ({ default: mod.Snow })), {
@@ -34,12 +35,16 @@ interface Message {
 }
 
 export function ChatWindow() {
-  const { messages, error, isInitializing, sendMessage, isSnowing } = useChat();
+  const { messages, error, isInitializing, sendMessage, isSnowing, matrixMode } = useChat();
   const [isTyping, setIsTyping] = useState(false);
   const lastMessageRef = useRef<HTMLDivElement>(null);
   const isFirstLoad = useRef(true);
-  const bg = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.100', 'gray.700');
+  
+  // Use matrix mode styling when active
+  const bg = matrixMode ? 'black' : useColorModeValue('white', 'gray.800');
+  const borderColor = matrixMode ? '#00FF00' : useColorModeValue('gray.100', 'gray.700');
+  const textColor = matrixMode ? '#00FF00' : undefined;
+  const fontFamily = matrixMode ? "'Courier New', monospace" : undefined;
 
   const handleSubmit = async (message: string) => {
     if (!message.trim()) return;
@@ -125,7 +130,12 @@ export function ChatWindow() {
       flexDirection="column"
       minH={{ base: '100dvh', md: 'calc(100vh - 40px)' }}
       bg={bg}
+      color={textColor}
+      fontFamily={fontFamily}
+      transition="all 0.3s ease-in-out"
+      position="relative"
     >
+      <MatrixRain isActive={matrixMode} />
       <Snow isActive={isSnowing} />
       <Box
         flex="1"
@@ -135,7 +145,7 @@ export function ChatWindow() {
         css={{
           '&::-webkit-scrollbar': { width: '4px' },
           '&::-webkit-scrollbar-track': { background: 'transparent' },
-          '&::-webkit-scrollbar-thumb': { background: 'gray.200' },
+          '&::-webkit-scrollbar-thumb': { background: matrixMode ? '#00FF00' : 'gray.200' },
         }}
       >
         <Box maxW="4xl" mx="auto" py={{ base: 2, md: 4 }}>
@@ -145,12 +155,12 @@ export function ChatWindow() {
                 key={i}
                 ref={i === messages.length - 1 ? lastMessageRef : undefined}
               >
-                <MessageBubble message={msg} isLast={i === messages.length - 1} />
+                <MessageBubble message={msg} isLast={i === messages.length - 1} matrixMode={matrixMode} />
               </Box>
             ))}
             {isTyping && (
               <Box alignSelf="flex-start">
-                <TypingIndicator />
+                <TypingIndicator matrixMode={matrixMode} />
               </Box>
             )}
           </VStack>
@@ -162,12 +172,12 @@ export function ChatWindow() {
         bg={bg}
         borderTop="1px solid"
         borderColor={borderColor}
-        boxShadow="0 -4px 6px -1px rgba(0, 0, 0, 0.1)"
+        boxShadow={matrixMode ? 'none' : "0 -4px 6px -1px rgba(0, 0, 0, 0.1)"}
         pb={{ base: 'env(safe-area-inset-bottom)', md: 0 }}
       >
         <Box maxW="4xl" mx="auto" w="full">
-          <SuggestedPrompts onPromptClick={handleSubmit} />
-          <ChatInput onSubmit={handleSubmit} isDisabled={isTyping} />
+          <SuggestedPrompts onPromptClick={handleSubmit} matrixMode={matrixMode} />
+          <ChatInput onSubmit={handleSubmit} isDisabled={isTyping} matrixMode={matrixMode} />
         </Box>
       </Box>
     </Box>

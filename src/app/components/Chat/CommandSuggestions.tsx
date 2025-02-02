@@ -15,6 +15,7 @@ const COMMANDS: Command[] = [
   { name: '/dark', description: 'Switch to dark mode' },
   { name: '/light', description: 'Switch to light mode' },
   { name: '/snow', description: 'Toggle snow effect' },
+  { name: '/matrix', description: 'Enter Matrix mode: transforms the chat into a green-on-black terminal' },
 ];
 
 interface CommandSuggestionsProps {
@@ -22,13 +23,16 @@ interface CommandSuggestionsProps {
   filter: string;
   onSelect: (command: string) => void;
   selectedIndex: number;
+  matrixMode?: boolean;
 }
 
-export function CommandSuggestions({ isOpen, filter, onSelect, selectedIndex }: CommandSuggestionsProps) {
-  const bg = useColorModeValue('white', 'gray.800');
-  const hoverBg = useColorModeValue('gray.50', 'gray.700');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
-  const selectedBg = useColorModeValue('blue.50', 'blue.900');
+export function CommandSuggestions({ isOpen, filter, onSelect, selectedIndex, matrixMode = false }: CommandSuggestionsProps) {
+  const bg = matrixMode ? 'black' : useColorModeValue('white', 'gray.800');
+  const hoverBg = matrixMode ? '#003300' : useColorModeValue('gray.50', 'gray.700');
+  const borderColor = matrixMode ? '#00FF00' : useColorModeValue('gray.200', 'gray.600');
+  const selectedBg = matrixMode ? '#004400' : useColorModeValue('blue.50', 'blue.900');
+  const textColor = matrixMode ? '#00FF00' : undefined;
+  const descriptionColor = matrixMode ? '#00AA00' : 'gray.500';
 
   const filteredCommands = COMMANDS.filter(cmd => 
     cmd.name.toLowerCase().includes(filter.toLowerCase())
@@ -47,6 +51,7 @@ export function CommandSuggestions({ isOpen, filter, onSelect, selectedIndex }: 
       border="1px solid"
       borderColor={borderColor}
       bg={bg}
+      color={textColor}
       boxShadow="lg"
       maxH="200px"
       overflowY="auto"
@@ -64,11 +69,12 @@ export function CommandSuggestions({ isOpen, filter, onSelect, selectedIndex }: 
             py={2}
             cursor="pointer"
             bg={index === selectedIndex ? selectedBg : undefined}
+            color={textColor}
             _hover={{ bg: index === selectedIndex ? selectedBg : hoverBg }}
             onClick={() => onSelect(cmd.name)}
           >
             <Text fontWeight="medium">{cmd.name}</Text>
-            <Text fontSize="sm" color="gray.500">{cmd.description}</Text>
+            <Text fontSize="sm" color={descriptionColor}>{cmd.description}</Text>
           </Box>
         ))}
       </VStack>

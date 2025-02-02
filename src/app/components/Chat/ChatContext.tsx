@@ -16,6 +16,7 @@ interface ChatState {
   isInitializing: boolean;
   error: string | null;
   isSnowing: boolean;
+  matrixMode: boolean;
 }
 
 interface ChatContextType extends ChatState {
@@ -30,6 +31,7 @@ const initialState: ChatState = {
   isInitializing: true,
   error: null,
   isSnowing: false,
+  matrixMode: false,
 };
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
@@ -326,7 +328,8 @@ type ChatAction =
   | { type: 'SET_ERROR'; error: string }
   | { type: 'CLEAR_ERROR' }
   | { type: 'SET_INITIALIZED' }
-  | { type: 'SET_SNOW'; isSnowing: boolean };
+  | { type: 'SET_SNOW'; isSnowing: boolean }
+  | { type: 'TOGGLE_MATRIX_MODE' };
 
 function chatReducer(state: ChatState, action: ChatAction): ChatState {
   switch (action.type) {
@@ -354,6 +357,8 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       return { ...state, isInitializing: false };
     case 'SET_SNOW':
       return { ...state, isSnowing: action.isSnowing };
+    case 'TOGGLE_MATRIX_MODE':
+      return { ...state, matrixMode: !state.matrixMode };
     default:
       return state;
   }

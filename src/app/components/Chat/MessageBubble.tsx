@@ -37,6 +37,7 @@ interface Message {
 interface MessageProps {
   message: Message;
   isLast: boolean;
+  matrixMode?: boolean;
 }
 
 function formatTime(date?: Date): string {
@@ -99,20 +100,24 @@ function CodeBlock({ children, isUser }: { children: string; isUser: boolean }) 
   );
 }
 
-export const MessageBubble = memo(function MessageBubble({ message, isLast }: MessageProps) {
+export const MessageBubble = memo(function MessageBubble({ message, isLast, matrixMode = false }: MessageProps) {
   const isUser = message.role === 'user';
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { sendMessage } = useChat();
   
-  const bg = useColorModeValue(
-    isUser ? 'blue.500' : 'gray.100',
-    isUser ? 'blue.400' : 'gray.700'
-  );
-  const color = useColorModeValue(
-    isUser ? 'white' : 'gray.900',
-    isUser ? 'white' : 'gray.100'
-  );
-  const timeColor = useColorModeValue('gray.500', 'gray.400');
+  const bg = matrixMode
+    ? (isUser ? '#003300' : '#001a00')
+    : useColorModeValue(
+        isUser ? 'blue.500' : 'gray.100',
+        isUser ? 'blue.400' : 'gray.700'
+      );
+  const color = matrixMode
+    ? '#00FF00'
+    : useColorModeValue(
+        isUser ? 'white' : 'gray.900',
+        isUser ? 'white' : 'gray.100'
+      );
+  const timeColor = matrixMode ? '#00FF00' : useColorModeValue('gray.500', 'gray.400');
 
   const isPongCommand = message.role === 'user' && message.content.trim().toLowerCase() === '/pong';
   const isPongResponse = message.role === 'assistant' && message.content.includes('Click this message to start playing Pong!');

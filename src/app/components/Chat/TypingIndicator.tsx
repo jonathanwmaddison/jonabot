@@ -5,8 +5,12 @@ import { motion } from 'framer-motion';
 
 const MotionCircle = motion(Circle);
 
-export function TypingIndicator() {
-  const dotColor = useColorModeValue('gray.400', 'gray.500');
+interface TypingIndicatorProps {
+  matrixMode?: boolean;
+}
+
+export function TypingIndicator({ matrixMode = false }: TypingIndicatorProps) {
+  const dotColor = matrixMode ? '#00FF00' : useColorModeValue('gray.400', 'gray.500');
 
   return (
     <HStack spacing={2} p={4}>
