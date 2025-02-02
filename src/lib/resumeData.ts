@@ -21,6 +21,7 @@ export interface ResumeData {
     company: string;
     period: string;
     details: string[];
+    companyDescription?: string;
   }>;
   education: Array<{
     degree: string;
@@ -59,6 +60,7 @@ export const resumeData: ResumeData = {
       title: "Staff Frontend Engineer",
       company: "Paige",
       period: "2024",
+      companyDescription: "AI-powered digital pathology and cancer diagnostics company revolutionizing clinical diagnosis and treatment in oncology",
       details: [
         "Led team building AI-integrated digital pathology viewer in regulated medical environment",
         "Spearheaded microfrontend architecture, reducing release complexity while maintaining compliance",
@@ -70,6 +72,7 @@ export const resumeData: ResumeData = {
       title: "Senior Frontend Engineer",
       company: "Paige",
       period: "2021 - 2023",
+      companyDescription: "AI-powered digital pathology and cancer diagnostics company revolutionizing clinical diagnosis and treatment in oncology",
       details: [
         "Led feature development and performance improvements for digital pathology case management tool",
         "Architected and implemented frontend tagging system for client-facing product across our case management frontend and pathology viewer applications",
@@ -80,6 +83,7 @@ export const resumeData: ResumeData = {
       title: "Senior Software Engineer",
       company: "Grasshopper Bank",
       period: "Mar 2021 - Oct 2021",
+      companyDescription: "Digital-first commercial bank focused on serving the innovation economy and technology companies",
       details: [
         "Led migration to microservices architecture with Nest.js, AWS Lambda, and event-driven patterns",
         "Implemented authorization service with flexible role mapping for banking requirements",
@@ -90,6 +94,7 @@ export const resumeData: ResumeData = {
       title: "Software Engineer",
       company: "Grasshopper Bank",
       period: "2018 - 2021",
+      companyDescription: "Digital-first commercial bank focused on serving the innovation economy and technology companies",
       details: [
         "Added essential features to the bank onboarding process and mobile application with React/React Native and Node.js",
         "Developed custom Native Modules enabling critical mobile functionality",
@@ -101,6 +106,7 @@ export const resumeData: ResumeData = {
       title: "Software Engineer",
       company: "OTTO Health",
       period: "2017 - 2018",
+      companyDescription: "Healthcare technology company providing telemedicine solutions for healthcare providers and patients",
       details: [
         "Led transition from Cordova to React Native for mobile applications",
         "Improved release process and reduced bugs in critical user flows"
@@ -110,6 +116,7 @@ export const resumeData: ResumeData = {
       title: "Software Engineer",
       company: "AlzCare Labs",
       period: "Jun 2017 - Oct 2017",
+      companyDescription: "Healthcare startup developing innovative solutions for caregivers and families of people with dementia",
       details: [
         "Co-led a team of interns building FindMe app for caregivers and family members of people with dementia",
         "Used agile development methods including scrum meetings and sprint planning to improve team communication and deliver milestones",

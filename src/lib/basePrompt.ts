@@ -22,7 +22,7 @@ export const getBasePrompt = (req?: Request) => {
 
   const formatExperience = (experience: typeof resumeData.experience) => {
     return experience.map(exp => 
-      `- ${exp.title} at ${exp.company} (${exp.period})\n  ${exp.details[0]}`
+      `- ${exp.title} at ${exp.company} (${exp.period})\n  ${exp.companyDescription ? `Company: ${exp.companyDescription}\n  ` : ''}${exp.details[0]}`
     ).join('\n');
   };
 
