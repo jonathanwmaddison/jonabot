@@ -1,7 +1,7 @@
-import { OpenAIStream, MODELS } from '@/lib/openai';
+import { OpenAIStream, StreamingTextResponse, MODELS } from '@/lib/openai';
 import { getBasePrompt } from '@/lib/basePrompt';
 import { NextRequest } from 'next/server';
-import { handleChatSession, createStreamingResponse, createChatResponse } from '@/lib/chatSessionHandler';
+import { waitUntil } from '@vercel/functions';
 
 // // Configure the function
 // export const runtime = 'nodejs';
@@ -31,37 +31,29 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Handle session creation/retrieval
-    const { sessionId, isNewSession } = await handleChatSession({
-      userMessages,
-      startTime,
-      req,
-      chatOrigin: 'general-chat'
-    });
-
     const finalMessages = [
       { role: 'system', content: getBasePrompt() },
       ...userMessages,
     ];
 
-    // Get the response from OpenAI
     const stream = await OpenAIStream({
       model: MODELS.GPT_4,
       messages: finalMessages,
       temperature: 0.7,
     });
 
-    // Create a streaming response with logging
-    const processedStream = createStreamingResponse(stream, {
-      sessionId,
-      userMessages,
-      startTime,
-      req,
-      chatOrigin: 'general-chat'
-    });
+    // Log request details after sending response
+    waitUntil(
+      (async () => {
+        const duration = Date.now() - startTime;
+        console.log(`Chat request processed in ${duration}ms`, {
+          messagesCount: userMessages.length,
+          region: process.env.VERCEL_REGION
+        });
+      })()
+    );
 
-    // Create the final response with cookie handling
-    return createChatResponse(processedStream, sessionId, isNewSession);
+    return new StreamingTextResponse(stream);
   } catch (error) {
     console.error('Chat error:', error);
     
