@@ -50,8 +50,7 @@ This chat interface demonstrates his skills in action. How can I help you evalua
         bg={logoBg}
         p={2}
         borderRadius="lg"
-        width="80px"
-        boxShadow="md"
+        width="60px"
         zIndex={10}
         opacity={0.9}
         _hover={{ opacity: 1 }}
