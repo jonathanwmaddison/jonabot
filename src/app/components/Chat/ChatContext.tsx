@@ -4,6 +4,7 @@ import { createContext, useContext, useReducer, useCallback, useEffect, useRef }
 import { useToast, useColorMode } from '@chakra-ui/react';
 import { handleCommand } from '@/lib/commands';
 import { extractContactInfo } from '@/lib/utils';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Message {
   role: string;
@@ -17,6 +18,7 @@ interface ChatState {
   error: string | null;
   isSnowing: boolean;
   matrixMode: boolean;
+  sessionId: string | null;
 }
 
 interface ChatContextType extends ChatState {
@@ -32,6 +34,7 @@ const initialState: ChatState = {
   error: null,
   isSnowing: false,
   matrixMode: false,
+  sessionId: null,
 };
 
 interface ChatProviderProps {
@@ -108,6 +111,73 @@ export function ChatProvider({ children, initialMessage }: ChatProviderProps) {
   const sendMessage = useCallback(async (content: string, apiEndpoint: string = '/api/chat') => {
     const timestamp = new Date();
     
+    // Initialize session ID and create session in Supabase if not exists
+    let activeSessionId = state.sessionId;
+    let sessionPromise: Promise<void> | null = null;
+
+    if (!activeSessionId) {
+      const newSessionId = uuidv4();
+      activeSessionId = newSessionId;
+      
+      // Create session first and store the promise
+      sessionPromise = fetch('/api/log-conversation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          create_session: true,
+          session_id: newSessionId,
+          chat_origin: apiEndpoint === '/api/huggingface-chat' ? 'huggingface' : 'web',
+          metadata: {
+            timestamp: timestamp.toISOString(),
+          }
+        }),
+      }).then(async (response) => {
+        if (!response.ok) {
+          throw new Error('Failed to create session');
+        }
+      });
+
+      dispatch({ 
+        type: 'SET_SESSION_ID', 
+        sessionId: newSessionId 
+      });
+    }
+
+    // Function to log messages that ensures session exists first
+    const logMessage = async (role: 'user' | 'assistant', messageContent: string, messageTimestamp: Date) => {
+      try {
+        // Wait for session creation if it's pending
+        if (sessionPromise) {
+          await sessionPromise;
+        }
+
+        await fetch('/api/log-conversation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            session_id: activeSessionId,
+            role,
+            message: messageContent,
+            chat_origin: apiEndpoint === '/api/huggingface-chat' ? 'huggingface' : 'web',
+            metadata: {
+              timestamp: messageTimestamp.toISOString(),
+            }
+          }),
+        });
+      } catch (error) {
+        console.error(`Failed to log ${role} message:`, error);
+      }
+    };
+
+    // Log user message asynchronously without blocking the main flow
+    if (activeSessionId) {
+      Promise.resolve().then(() => logMessage('user', content, timestamp));
+    }
+
     // Check for commands
     const commandResponse = handleCommand(content, { dispatch, setColorMode, timestamp });
     if (commandResponse) {
@@ -297,6 +367,12 @@ Or just tell me naturally and I'll help format it!`,
           content: assistantResponse,
         });
       }
+
+      // Log assistant message asynchronously without blocking
+      if (activeSessionId) {
+        const assistantTimestamp = new Date();
+        Promise.resolve().then(() => logMessage('assistant', assistantResponse, assistantTimestamp));
+      }
     } catch (error) {
       dispatch({
         type: 'SET_ERROR',
@@ -310,7 +386,7 @@ Or just tell me naturally and I'll help format it!`,
         isClosable: true,
       });
     }
-  }, [state.messages, dispatch, setColorMode, toast]);
+  }, [state.messages, state.sessionId, toast]);
 
   return (
     <ChatContext.Provider value={{ ...state, sendMessage, clearError }}>
@@ -334,7 +410,8 @@ type ChatAction =
   | { type: 'CLEAR_ERROR' }
   | { type: 'SET_INITIALIZED' }
   | { type: 'SET_SNOW'; isSnowing: boolean }
-  | { type: 'TOGGLE_MATRIX_MODE' };
+  | { type: 'TOGGLE_MATRIX_MODE' }
+  | { type: 'SET_SESSION_ID'; sessionId: string };
 
 function chatReducer(state: ChatState, action: ChatAction): ChatState {
   switch (action.type) {
@@ -364,6 +441,8 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
       return { ...state, isSnowing: action.isSnowing };
     case 'TOGGLE_MATRIX_MODE':
       return { ...state, matrixMode: !state.matrixMode };
+    case 'SET_SESSION_ID':
+      return { ...state, sessionId: action.sessionId };
     default:
       return state;
   }
