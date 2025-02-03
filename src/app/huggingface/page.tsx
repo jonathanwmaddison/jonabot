@@ -45,12 +45,12 @@ This chat interface demonstrates his skills in action. How can I help you evalua
       {/* Fixed position logo */}
       <Box
         position="fixed"
-        top={4}
-        right={4}
+        top={{ base: 2, md: 4 }}
+        right={{ base: 2, md: 4 }}
         bg={logoBg}
-        p={2}
+        p={{ base: 1.5, md: 2 }}
         borderRadius="lg"
-        width="60px"
+        width={{ base: "40px", md: "60px" }}
         zIndex={10}
         opacity={0.9}
         _hover={{ opacity: 1 }}
