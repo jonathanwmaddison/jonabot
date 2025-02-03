@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
-// Simple in-memory rate limiting
+// Ensure this route runs in a Node.js environment (not Edge)
+export const runtime = 'nodejs';
+
+// Simple in-memory rate limiting (Note: This state is not shared between serverless instances)
 const RATE_LIMIT_WINDOW = 3600000; // 1 hour in milliseconds
 const MAX_EMAILS_PER_WINDOW = 3; // Max 3 emails per hour
 const emailLog = new Map<string, number[]>();
@@ -17,12 +20,12 @@ function isRateLimited(identifier: string): boolean {
     return true;
   }
   
-  // Update the log
+  // Update the log with the new email timestamp
   emailLog.set(identifier, [...recentEmails, now]);
   return false;
 }
 
-// Create a transporter using Gmail SMTP
+// Create a nodemailer transporter using Gmail SMTP
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -34,11 +37,12 @@ const transporter = nodemailer.createTransport({
 export async function POST(req: NextRequest) {
   try {
     console.log('Contact API called');
-    
-    // Get client identifier (IP address or similar)
-    const identifier = req.ip || 'unknown';
-    
-    // Check rate limit
+
+    // Extract client IP from the x-forwarded-for header (if available)
+    const forwardedFor = req.headers.get('x-forwarded-for');
+    const identifier = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown';
+
+    // Check rate limit for this IP
     if (isRateLimited(identifier)) {
       console.log('Rate limit exceeded for:', identifier);
       return NextResponse.json(
@@ -49,8 +53,8 @@ export async function POST(req: NextRequest) {
 
     const { name, email, message } = await req.json();
     console.log('Received contact info:', { name, email, message });
-    
-    // Enhanced validation
+
+    // Basic validation
     if (!email || !message) {
       console.log('Validation failed: missing email or message');
       return NextResponse.json(
@@ -60,7 +64,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate email format
-    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/;
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
     if (!emailRegex.test(email)) {
       console.log('Validation failed: invalid email format');
       return NextResponse.json(
@@ -109,4 +113,4 @@ Message: ${message}
       { status: 500 }
     );
   }
-} 
+}
