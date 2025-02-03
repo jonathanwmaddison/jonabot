@@ -21,9 +21,16 @@ interface ChatInputProps {
   onSubmit: (message: string) => void;
   isDisabled?: boolean;
   matrixMode?: boolean;
+  theme?: {
+    inputBorderColor?: string;
+    inputFocusBorderColor?: string;
+    buttonBg?: string;
+    buttonHoverBg?: string;
+  };
+  commands?: Array<{ name: string; description: string; }>;
 }
 
-export function ChatInput({ onSubmit, isDisabled, matrixMode = false }: ChatInputProps) {
+export function ChatInput({ onSubmit, isDisabled, matrixMode = false, theme = {}, commands }: ChatInputProps) {
   const [input, setInput] = useState('');
   const [showCommands, setShowCommands] = useState(false);
   const [selectedCommandIndex, setSelectedCommandIndex] = useState(0);
@@ -33,7 +40,7 @@ export function ChatInput({ onSubmit, isDisabled, matrixMode = false }: ChatInpu
   const lightModeBorderColor = useColorModeValue('gray.200', 'gray.600');
   
   // Use matrix mode styling when active
-  const borderColor = matrixMode ? '#00FF00' : lightModeBorderColor;
+  const borderColor = matrixMode ? '#00FF00' : (theme.inputBorderColor || lightModeBorderColor);
   const bg = matrixMode ? 'black' : undefined;
   const color = matrixMode ? '#00FF00' : undefined;
   const placeholderColor = matrixMode ? '#00FF00' : undefined;
@@ -112,6 +119,7 @@ export function ChatInput({ onSubmit, isDisabled, matrixMode = false }: ChatInpu
             onSelect={handleCommandSelect}
             selectedIndex={selectedCommandIndex}
             matrixMode={matrixMode}
+            commands={commands}
           />
         </AnimatePresence>
         <HStack spacing={2}>
@@ -133,7 +141,7 @@ export function ChatInput({ onSubmit, isDisabled, matrixMode = false }: ChatInpu
             borderColor={borderColor}
             _placeholder={{ color: placeholderColor }}
             _focus={{
-              borderColor: matrixMode ? '#00FF00' : 'blue.500',
+              borderColor: theme.inputFocusBorderColor || (matrixMode ? '#00FF00' : 'blue.500'),
               boxShadow: 'none',
             }}
             sx={{
@@ -152,12 +160,14 @@ export function ChatInput({ onSubmit, isDisabled, matrixMode = false }: ChatInpu
             size={{ base: "md", md: "sm" }}
             minW={{ base: "44px", md: "32px" }}
             height={{ base: "44px", md: "32px" }}
-            bg={matrixMode ? 'black' : undefined}
-            color={matrixMode ? '#00FF00' : undefined}
+            bg={theme.buttonBg || (matrixMode ? 'black' : undefined)}
+            color={matrixMode ? '#00FF00' : 'white'}
             borderColor={matrixMode ? '#00FF00' : undefined}
             _hover={matrixMode ? {
               bg: '#003300'
-            } : undefined}
+            } : {
+              bg: theme.buttonHoverBg
+            }}
           />
         </HStack>
       </Box>

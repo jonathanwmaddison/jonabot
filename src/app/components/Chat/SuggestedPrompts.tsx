@@ -6,11 +6,30 @@ interface SuggestedPromptsProps {
 }
 
 const SUGGESTED_PROMPTS = [
-  { text: "Jonathan's resume", prompt: "Can you show me Jonathan's resume?" },
-  { text: "Work experience", prompt: "What is Jonathan's work experience?" },
-  { text: "Technical skills", prompt: "What are Jonathan's technical skills?" },
-  { text: "Education", prompt: "What is Jonathan's educational background?" },
-  { text: "❓ Help", prompt: "/help" },
+  { 
+    text: "AI Work Experience", 
+    prompt: "Tell me about Jonathan's experience building AI-integrated applications at Paige and other companies?" 
+  },
+  { 
+    text: "Frontend Leadership", 
+    prompt: "What frontend architecture and team leadership experience does Jonathan have from his Staff Engineer role?" 
+  },
+  { 
+    text: "Complex UI Systems", 
+    prompt: "Can you describe Jonathan's experience building complex UI systems like the digital pathology viewer at Paige?" 
+  },
+  { 
+    text: "Tech Leadership", 
+    prompt: "How has Jonathan led technical initiatives and mentored teams in his professional roles?" 
+  },
+  { 
+    text: "Modern Stack", 
+    prompt: "What's Jonathan's experience with modern web technologies like React, TypeScript, and microfrontends?" 
+  },
+  { 
+    text: "❓ Help", 
+    prompt: "/help" 
+  },
 ];
 
 export function SuggestedPrompts({ onPromptClick, matrixMode = false }: SuggestedPromptsProps) {

@@ -38,6 +38,10 @@ interface MessageProps {
   message: Message;
   isLast: boolean;
   matrixMode?: boolean;
+  theme?: {
+    messageBubbleBg?: string;
+    messageBubbleBorderColor?: string;
+  };
 }
 
 function formatTime(date?: Date): string {
@@ -100,7 +104,7 @@ function CodeBlock({ children, isUser }: { children: string; isUser: boolean }) 
   );
 }
 
-export const MessageBubble = memo(function MessageBubble({ message, isLast, matrixMode = false }: MessageProps) {
+export const MessageBubble = memo(function MessageBubble({ message, isLast, matrixMode = false, theme = {} }: MessageProps) {
   const isUser = message.role === 'user';
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { sendMessage } = useChat();
@@ -114,13 +118,15 @@ export const MessageBubble = memo(function MessageBubble({ message, isLast, matr
   
   const bg = matrixMode
     ? (isUser ? '#003300' : '#001a00')
-    : (isUser ? userLightBg : assistantLightBg);
+    : (isUser ? userLightBg : (theme.messageBubbleBg || assistantLightBg));
     
   const color = matrixMode
     ? '#00FF00'
     : (isUser ? userLightColor : assistantLightColor);
     
   const timeColor = matrixMode ? '#00FF00' : lightTimeColor;
+
+  const borderColor = theme.messageBubbleBorderColor;
 
   const isPongCommand = message.role === 'user' && message.content.trim().toLowerCase() === '/pong';
   const isPongResponse = message.role === 'assistant' && message.content.includes('Click this message to start playing Pong!');
@@ -183,6 +189,8 @@ export const MessageBubble = memo(function MessageBubble({ message, isLast, matr
                 transform: 'scale(1.02)',
               } : undefined}
               transition="all 0.2s"
+              border={borderColor && !isUser ? "1px solid" : undefined}
+              borderColor={borderColor}
             >
               <ReactMarkdown
                 components={{

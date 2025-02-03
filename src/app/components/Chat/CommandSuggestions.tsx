@@ -8,14 +8,15 @@ interface Command {
   description: string;
 }
 
-const COMMANDS: Command[] = [
+const DEFAULT_COMMANDS: Command[] = [
   { name: '/help', description: 'Show available commands' },
+  { name: '/ai-projects', description: 'View AI integration projects and experience' },
+  { name: '/ui-components', description: 'Showcase complex UI components and design systems' },
+  { name: '/open-source', description: 'List open source contributions and collaborative work' },
+  { name: '/tech-stack', description: 'View experience with React, TypeScript, and modern web APIs' },
+  { name: '/team-collab', description: 'Experience working with ML practitioners and researchers' },
   { name: '/contact', description: 'Contact Jonathan' },
-  { name: '/pong', description: 'Play a game of Pong' },
-  { name: '/dark', description: 'Switch to dark mode' },
-  { name: '/light', description: 'Switch to light mode' },
-  { name: '/snow', description: 'Toggle snow effect' },
-  { name: '/matrix', description: 'Enter Matrix mode: transforms the chat into a green-on-black terminal' },
+  { name: '/resume', description: 'View or download resume' },
 ];
 
 interface CommandSuggestionsProps {
@@ -24,9 +25,17 @@ interface CommandSuggestionsProps {
   onSelect: (command: string) => void;
   selectedIndex: number;
   matrixMode?: boolean;
+  commands?: Command[];
 }
 
-export function CommandSuggestions({ isOpen, filter, onSelect, selectedIndex, matrixMode = false }: CommandSuggestionsProps) {
+export function CommandSuggestions({ 
+  isOpen, 
+  filter, 
+  onSelect, 
+  selectedIndex, 
+  matrixMode = false,
+  commands = DEFAULT_COMMANDS 
+}: CommandSuggestionsProps) {
   // Move hooks to top level
   const lightModeBg = useColorModeValue('white', 'gray.800');
   const lightModeHoverBg = useColorModeValue('gray.50', 'gray.700');
@@ -40,7 +49,7 @@ export function CommandSuggestions({ isOpen, filter, onSelect, selectedIndex, ma
   const textColor = matrixMode ? '#00FF00' : undefined;
   const descriptionColor = matrixMode ? '#00AA00' : 'gray.500';
 
-  const filteredCommands = COMMANDS.filter(cmd => 
+  const filteredCommands = commands.filter(cmd => 
     cmd.name.toLowerCase().includes(filter.toLowerCase())
   );
 

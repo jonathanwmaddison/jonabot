@@ -23,6 +23,7 @@ import { SuggestedPrompts } from './SuggestedPrompts';
 import dynamic from 'next/dynamic';
 import { handleCommand } from '@/lib/commandHandler';
 import { MatrixRain } from '../MatrixRain';
+import { ChatProvider } from './ChatContext';
 
 // Dynamically import Snow component
 const Snow = dynamic(() => import('../Snow').then(mod => ({ default: mod.Snow })), {
@@ -34,7 +35,33 @@ interface Message {
   content: string;
 }
 
-export function ChatWindow() {
+interface ChatWindowProps {
+  apiEndpoint?: string;
+  customTheme?: {
+    background?: string;
+    accentColor?: string;
+    textColor?: string;
+    fontFamily?: string;
+    inputBorderColor?: string;
+    inputFocusBorderColor?: string;
+    buttonBg?: string;
+    buttonHoverBg?: string;
+    messageBubbleBg?: string;
+    messageBubbleBorderColor?: string;
+  };
+  initialMessage?: string;
+  commands?: Array<{ name: string; description: string; }>;
+}
+
+export function ChatWindow({ apiEndpoint = '/api/chat', customTheme, initialMessage, commands }: ChatWindowProps) {
+  return (
+    <ChatProvider initialMessage={initialMessage}>
+      <ChatWindowContent apiEndpoint={apiEndpoint} customTheme={customTheme} commands={commands} />
+    </ChatProvider>
+  );
+}
+
+function ChatWindowContent({ apiEndpoint, customTheme, commands }: Omit<ChatWindowProps, 'initialMessage'>) {
   const { messages, error, isInitializing, sendMessage, isSnowing, matrixMode } = useChat();
   const [isTyping, setIsTyping] = useState(false);
   const lastMessageRef = useRef<HTMLDivElement>(null);
@@ -44,17 +71,20 @@ export function ChatWindow() {
   const lightModeBg = useColorModeValue('white', 'gray.800');
   const lightModeBorderColor = useColorModeValue('gray.100', 'gray.700');
   
-  // Use matrix mode styling when active
-  const bg = matrixMode ? 'black' : lightModeBg;
-  const borderColor = matrixMode ? '#00FF00' : lightModeBorderColor;
-  const textColor = matrixMode ? '#00FF00' : undefined;
-  const fontFamily = matrixMode ? "'Courier New', monospace" : undefined;
+  // Merge default theme with customTheme
+  const defaultTheme = {
+    background: matrixMode ? 'black' : lightModeBg,
+    accentColor: matrixMode ? '#00FF00' : 'blue.500',
+    textColor: matrixMode ? '#00FF00' : undefined,
+    fontFamily: matrixMode ? "'Courier New', monospace" : undefined,
+  };
+  const theme = { ...defaultTheme, ...customTheme };
 
   const handleSubmit = async (message: string) => {
     if (!message.trim()) return;
     setIsTyping(true);
     try {
-      await sendMessage(message);
+      await sendMessage(message, apiEndpoint);
     } finally {
       setIsTyping(false);
     }
@@ -80,7 +110,7 @@ export function ChatWindow() {
         display="flex"
         flexDirection="column"
         minH={{ base: '100dvh', md: 'calc(100vh - 40px)' }}
-        bg={bg}
+        bg={theme.background}
       >
         <LoadingSkeleton />
       </Box>
@@ -93,7 +123,7 @@ export function ChatWindow() {
         display="flex"
         flexDirection="column"
         minH={{ base: '100dvh', md: 'calc(100vh - 40px)' }}
-        bg={bg}
+        bg={theme.background}
         justifyContent="center"
         alignItems="center"
         textAlign="center"
@@ -133,9 +163,9 @@ export function ChatWindow() {
       display="flex"
       flexDirection="column"
       minH={{ base: '100dvh', md: 'calc(100vh - 40px)' }}
-      bg={bg}
-      color={textColor}
-      fontFamily={fontFamily}
+      bg={theme.background}
+      color={theme.textColor}
+      fontFamily={theme.fontFamily}
       transition="all 0.3s ease-in-out"
       position="relative"
     >
@@ -149,7 +179,7 @@ export function ChatWindow() {
         css={{
           '&::-webkit-scrollbar': { width: '4px' },
           '&::-webkit-scrollbar-track': { background: 'transparent' },
-          '&::-webkit-scrollbar-thumb': { background: matrixMode ? '#00FF00' : 'gray.200' },
+          '&::-webkit-scrollbar-thumb': { background: theme.accentColor },
         }}
       >
         <Box maxW="4xl" mx="auto" py={{ base: 2, md: 4 }}>
@@ -159,7 +189,12 @@ export function ChatWindow() {
                 key={i}
                 ref={i === messages.length - 1 ? lastMessageRef : undefined}
               >
-                <MessageBubble message={msg} isLast={i === messages.length - 1} matrixMode={matrixMode} />
+                <MessageBubble 
+                  message={msg} 
+                  isLast={i === messages.length - 1} 
+                  matrixMode={matrixMode}
+                  theme={customTheme}
+                />
               </Box>
             ))}
             {isTyping && (
@@ -173,15 +208,21 @@ export function ChatWindow() {
       <Box
         position="sticky"
         bottom={0}
-        bg={bg}
+        bg={theme.background}
         borderTop="1px solid"
-        borderColor={borderColor}
+        borderColor={theme.accentColor}
         boxShadow={matrixMode ? 'none' : "0 -4px 6px -1px rgba(0, 0, 0, 0.1)"}
         pb={{ base: 'env(safe-area-inset-bottom)', md: 0 }}
       >
         <Box maxW="4xl" mx="auto" w="full">
           <SuggestedPrompts onPromptClick={handleSubmit} matrixMode={matrixMode} />
-          <ChatInput onSubmit={handleSubmit} isDisabled={isTyping} matrixMode={matrixMode} />
+          <ChatInput 
+            onSubmit={handleSubmit} 
+            isDisabled={isTyping} 
+            matrixMode={matrixMode}
+            theme={customTheme}
+            commands={commands}
+          />
         </Box>
       </Box>
     </Box>

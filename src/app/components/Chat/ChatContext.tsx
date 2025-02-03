@@ -20,7 +20,7 @@ interface ChatState {
 }
 
 interface ChatContextType extends ChatState {
-  sendMessage: (content: string) => Promise<void>;
+  sendMessage: (content: string, apiEndpoint?: string) => Promise<void>;
   clearError: () => void;
 }
 
@@ -34,7 +34,12 @@ const initialState: ChatState = {
   matrixMode: false,
 };
 
-export function ChatProvider({ children }: { children: React.ReactNode }) {
+interface ChatProviderProps {
+  children: React.ReactNode;
+  initialMessage?: string;
+}
+
+export function ChatProvider({ children, initialMessage }: ChatProviderProps) {
   const [state, dispatch] = useReducer(chatReducer, initialState);
   const toast = useToast();
   const isInitialized = useRef(false);
@@ -66,7 +71,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
           type: 'ADD_MESSAGE',
           message: {
             role: 'assistant',
-            content: 'Hi! 👋 I\'m JonaBot, your guide to Jonathan\'s professional journey. Feel free to ask me about his experience, projects, or skills - I\'m here to help!',
+            content: initialMessage || 'Hi! 👋 I\'m JonaBot, your guide to Jonathan\'s professional journey. Feel free to ask me about his experience, projects, or skills - I\'m here to help!',
             timestamp,
           },
         });
@@ -81,7 +86,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     };
 
     checkConnection();
-  }, []);
+  }, [initialMessage]);
 
   const clearError = useCallback(() => {
     dispatch({ type: 'CLEAR_ERROR' });
@@ -100,7 +105,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     return contactPhrases.some(phrase => phrase.test(content));
   }
 
-  const sendMessage = useCallback(async (content: string) => {
+  const sendMessage = useCallback(async (content: string, apiEndpoint: string = '/api/chat') => {
     const timestamp = new Date();
     
     // Check for commands
@@ -257,7 +262,7 @@ Or just tell me naturally and I'll help format it!`,
     });
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
