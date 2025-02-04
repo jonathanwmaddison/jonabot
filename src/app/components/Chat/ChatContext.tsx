@@ -119,25 +119,28 @@ export function ChatProvider({ children, initialMessage }: ChatProviderProps) {
       const newSessionId = uuidv4();
       activeSessionId = newSessionId;
       
-      // Create session first and store the promise
-      sessionPromise = fetch('/api/log-conversation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          create_session: true,
-          session_id: newSessionId,
-          chat_origin: apiEndpoint === '/api/huggingface-chat' ? 'huggingface' : 'web',
-          metadata: {
-            timestamp: timestamp.toISOString(),
+      // Skip session creation in development mode
+      if (process.env.NODE_ENV !== 'development') {
+        // Create session first and store the promise
+        sessionPromise = fetch('/api/log-conversation', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            create_session: true,
+            session_id: newSessionId,
+            chat_origin: apiEndpoint === '/api/huggingface-chat' ? 'huggingface' : 'web',
+            metadata: {
+              timestamp: timestamp.toISOString(),
+            }
+          }),
+        }).then(async (response) => {
+          if (!response.ok) {
+            throw new Error('Failed to create session');
           }
-        }),
-      }).then(async (response) => {
-        if (!response.ok) {
-          throw new Error('Failed to create session');
-        }
-      });
+        });
+      }
 
       dispatch({ 
         type: 'SET_SESSION_ID', 
@@ -147,6 +150,11 @@ export function ChatProvider({ children, initialMessage }: ChatProviderProps) {
 
     // Function to log messages that ensures session exists first
     const logMessage = async (role: 'user' | 'assistant', messageContent: string, messageTimestamp: Date) => {
+      // Skip logging in development mode
+      if (process.env.NODE_ENV === 'development') {
+        return;
+      }
+
       try {
         // Wait for session creation if it's pending
         if (sessionPromise) {
