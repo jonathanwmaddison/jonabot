@@ -9,14 +9,13 @@ interface Command {
 }
 
 const DEFAULT_COMMANDS: Command[] = [
-  { name: '/help', description: 'Show available commands' },
-  { name: '/ai-projects', description: 'View AI integration projects and experience' },
-  { name: '/ui-components', description: 'Showcase complex UI components and design systems' },
-  { name: '/open-source', description: 'List open source contributions and collaborative work' },
-  { name: '/tech-stack', description: 'View experience with React, TypeScript, and modern web APIs' },
-  { name: '/team-collab', description: 'Experience working with ML practitioners and researchers' },
-  { name: '/contact', description: 'Contact Jonathan' },
-  { name: '/resume', description: 'View or download resume' },
+  { name: '/contact', description: 'Send a message to Jonathan' },
+  { name: '/dark', description: 'Switch to dark mode' },
+  { name: '/help', description: 'Show help message' },
+  { name: '/light', description: 'Switch to light mode' },
+  { name: '/matrix', description: 'Enter Matrix mode' },
+  { name: '/pong', description: 'Play a game of Pong' },
+  { name: '/snow', description: 'Toggle snow effect' },
 ];
 
 interface CommandSuggestionsProps {

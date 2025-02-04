@@ -3,6 +3,7 @@ import { HStack, Button, useColorModeValue } from '@chakra-ui/react';
 interface SuggestedPromptsProps {
   onPromptClick: (prompt: string) => void;
   matrixMode?: boolean;
+  isDisabled?: boolean;
 }
 
 const SUGGESTED_PROMPTS = [
@@ -32,7 +33,7 @@ const SUGGESTED_PROMPTS = [
   },
 ];
 
-export function SuggestedPrompts({ onPromptClick, matrixMode = false }: SuggestedPromptsProps) {
+export function SuggestedPrompts({ onPromptClick, matrixMode = false, isDisabled = false }: SuggestedPromptsProps) {
   // Move hooks to top level
   const lightModeBg = useColorModeValue('gray.100', 'gray.700');
   const lightModeHoverBg = useColorModeValue('gray.200', 'gray.600');
@@ -55,9 +56,13 @@ export function SuggestedPrompts({ onPromptClick, matrixMode = false }: Suggeste
           bg={buttonBg}
           color={buttonColor}
           border={buttonBorder}
-          _hover={{ bg: buttonHoverBg }}
-          onClick={() => onPromptClick(item.prompt)}
+          _hover={{ bg: !isDisabled ? buttonHoverBg : buttonBg }}
+          onClick={() => !isDisabled && onPromptClick(item.prompt)}
           flexShrink={0}
+          opacity={isDisabled ? 0.7 : 1}
+          cursor={isDisabled ? 'not-allowed' : 'pointer'}
+          _disabled={{ opacity: 0.7 }}
+          isDisabled={isDisabled}
         >
           {item.text}
         </Button>

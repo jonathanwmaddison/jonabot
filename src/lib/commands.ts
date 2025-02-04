@@ -44,13 +44,12 @@ const commands: Command[] = [
       assistantMessage: {
         content: `Here are the available commands:
 
-• /help - Show this help message
-• /pong - Play a game of Pong
-• /dark - Switch to dark mode
-• /light - Switch to light mode
-• /snow - Toggle snow effect
-• /contact - Send a message to Jonathan
-• /matrix - Enter Matrix mode: transforms the chat into a green-on-black terminal`
+* /contact - Send a message to Jonathan
+* /dark - Switch to dark mode
+* /light - Switch to light mode
+* /matrix - Enter Matrix mode: transforms the chat into a green-on-black terminal
+* /pong - Play a game of Pong
+* /snow - Toggle snow effect`
       }
     })
   },

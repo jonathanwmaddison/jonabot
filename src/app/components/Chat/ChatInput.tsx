@@ -120,6 +120,7 @@ export function ChatInput({ onSubmit, isDisabled, matrixMode = false, theme = {}
             selectedIndex={selectedCommandIndex}
             matrixMode={matrixMode}
             commands={commands}
+            isLoading={isDisabled}
           />
         </AnimatePresence>
         <HStack spacing={2}>

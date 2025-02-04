@@ -301,19 +301,7 @@ export function ChatProvider({ children, initialMessage }: ChatProviderProps) {
           type: 'ADD_MESSAGE',
           message: {
             role: 'assistant',
-            content: `I'll help you send a message to Jonathan! Please provide:
-1. Your name (optional)
-2. Your email address (so he can reply to you)
-3. Your message
-
-You can format it like this:
-\`\`\`
-Name: Your Name
-Email: your.email@example.com
-Message: Your message here
-\`\`\`
-
-Or just tell me naturally and I'll help format it!`,
+            content: `I'll help you send a message to Jonathan! Please provide:`,
             timestamp: new Date(),
           },
         });

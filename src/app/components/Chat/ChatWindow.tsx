@@ -215,7 +215,7 @@ function ChatWindowContent({ apiEndpoint, customTheme, commands }: Omit<ChatWind
         pb={{ base: 'env(safe-area-inset-bottom)', md: 0 }}
       >
         <Box maxW="4xl" mx="auto" w="full">
-          <SuggestedPrompts onPromptClick={handleSubmit} matrixMode={matrixMode} />
+          <SuggestedPrompts onPromptClick={handleSubmit} matrixMode={matrixMode} isDisabled={isTyping} />
           <ChatInput 
             onSubmit={handleSubmit} 
             isDisabled={isTyping} 
