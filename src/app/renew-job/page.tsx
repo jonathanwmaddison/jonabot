@@ -23,16 +23,18 @@ export default function RenewJobPage() {
   const textColor = useColorModeValue('var(--color-text-primary)', 'var(--color-text-white)');
   const borderColor = useColorModeValue('var(--color-primary)', 'var(--color-text-white)');
 
-  const initialMessage = `Hi! 👋 I'm here to help with your Staff Software Engineer application at Renew Home.
+  const initialMessage = `Hi! 👋 I'm an AI assistant designed to help you learn about Jonathan's qualifications for the Staff Software Engineer position at Renew Home.
 
-I can assist you with:
-* Understanding the role requirements
-* Highlighting your relevant experience
-* Technical interview preparation
-* Leadership & mentoring examples
-* Questions about Renew's mission and impact
+This chat interface demonstrates his technical abilities in action - built with modern web technologies and seamless AI integration.
 
-How can I help you prepare for this opportunity?`;
+I can provide specific examples of:
+* Technical leadership and architectural decisions
+* Complex systems he's built and scaled
+* Team mentoring and collaboration experience
+* Experience with your tech stack (TypeScript, React, Remix, NX)
+* Approach to technical challenges and innovation
+
+What aspects of Jonathan's background would you like to explore?`;
 
   return (
     <Box 
