@@ -382,7 +382,7 @@ export function ChatProvider({ children, initialMessage }: ChatProviderProps) {
         isClosable: true,
       });
     }
-  }, [state.messages, state.sessionId, toast]);
+  }, [state.messages, state.sessionId, toast, setColorMode]);
 
   return (
     <ChatContext.Provider value={{ ...state, sendMessage, clearError }}>

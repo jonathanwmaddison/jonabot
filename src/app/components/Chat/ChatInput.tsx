@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, KeyboardEvent, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import {
   Box,
   Textarea,
@@ -8,12 +8,9 @@ import {
   HStack,
   useColorModeValue,
   Spinner,
-  InputGroup,
-  InputRightElement,
-  Button,
+
 } from '@chakra-ui/react';
 import { FiSend } from 'react-icons/fi';
-import { useChat } from './ChatContext';
 import { CommandSuggestions } from './CommandSuggestions';
 import { AnimatePresence } from 'framer-motion';
 
@@ -120,7 +117,6 @@ export function ChatInput({ onSubmit, isDisabled, matrixMode = false, theme = {}
             selectedIndex={selectedCommandIndex}
             matrixMode={matrixMode}
             commands={commands}
-            isLoading={isDisabled}
           />
         </AnimatePresence>
         <HStack spacing={2}>
