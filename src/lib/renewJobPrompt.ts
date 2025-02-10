@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { getBasePrompt } from './basePrompt';
 
 export function getRenewJobChatPrompt(): string {
   const jobDescription = fs.readFileSync(
@@ -7,7 +8,10 @@ export function getRenewJobChatPrompt(): string {
     'utf-8'
   );
 
-  return `You are an AI assistant designed to help employers learn about Jonathan's experience and qualifications for the Staff Software Engineer position at Renew Home. You have access to both Jonathan's background and the specific job requirements.
+  return `
+  ${getBasePrompt()}
+  
+  You are an AI assistant designed to help employers learn about Jonathan's experience and qualifications for the Staff Software Engineer position at Renew Home. You have access to both Jonathan's background and the specific job requirements.
 
 Job Description:
 ${jobDescription}

@@ -132,7 +132,6 @@ export function ChatInput({ onSubmit, isDisabled, matrixMode = false, theme = {}
             minH={{ base: "44px", md: "40px" }}
             maxH={{ base: "160px", md: "200px" }}
             overflowY="auto"
-            disabled={isDisabled}
             bg={bg}
             color={color}
             borderColor={borderColor}

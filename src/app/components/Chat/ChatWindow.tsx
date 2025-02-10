@@ -99,7 +99,7 @@ function ChatWindowContent({ apiEndpoint, customTheme, commands }: Omit<ChatWind
     }
 
     // Only scroll when a new message is added
-    if (lastMessageRef.current && messages.length > 0) {
+    if (lastMessageRef.current && messages.length > 1) {
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, [messages.length]);
@@ -175,7 +175,7 @@ function ChatWindowContent({ apiEndpoint, customTheme, commands }: Omit<ChatWind
         flex="1"
         overflowY="auto"
         px={{ base: 2, md: 4 }}
-        pb={{ base: "120px", md: "140px" }}
+        pb={{ base: "140px", md: "160px" }}
         css={{
           '&::-webkit-scrollbar': { width: '4px' },
           '&::-webkit-scrollbar-track': { background: 'transparent' },
@@ -206,15 +206,18 @@ function ChatWindowContent({ apiEndpoint, customTheme, commands }: Omit<ChatWind
         </Box>
       </Box>
       <Box
-        position="sticky"
+        position="fixed"
         bottom={0}
+        left={0}
+        right={0}
         bg={theme.background}
         borderTop="1px solid"
         borderColor={theme.accentColor}
         boxShadow={matrixMode ? 'none' : "0 -4px 6px -1px rgba(0, 0, 0, 0.1)"}
         pb={{ base: 'env(safe-area-inset-bottom)', md: 0 }}
+        zIndex={10}
       >
-        <Box maxW="4xl" mx="auto" w="full">
+        <Box maxW="4xl" mx="auto" w="full" bg={theme.background} px={4}>
           <SuggestedPrompts onPromptClick={handleSubmit} matrixMode={matrixMode} isDisabled={isTyping} />
           <ChatInput 
             onSubmit={handleSubmit} 

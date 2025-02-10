@@ -63,7 +63,7 @@ What aspects of Jonathan's background would you like to explore?`;
           <EmployerChatWindow 
             apiEndpoint="/api/renew-job-chat" 
             customTheme={{
-              background: 'transparent',
+              background: 'var(--color-text-white)',
               accentColor: 'var(--color-primary)',
               textColor: textColor,
               fontFamily: 'var(--font-inter)',
