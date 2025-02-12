@@ -89,13 +89,13 @@ How can I help you evaluate his fit for EnergyHub's EV team?`;
               fontWeight="600"
               mb={1}
             >
-              Jonathan's Application Assistant
+              Jonathan&apos;s Application Assistant
             </Box>
             <Box color={brandBlue} fontWeight="500" fontSize="sm">
               Senior Frontend Engineer Position
             </Box>
             <Box color={brandBlue} fontWeight="500" fontSize="sm">
-            Energy Hub's EV Team
+            Energy Hub&apos;s EV Team
 
             </Box>
           </Box>
