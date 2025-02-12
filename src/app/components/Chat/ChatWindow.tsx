@@ -51,17 +51,18 @@ interface ChatWindowProps {
   };
   initialMessage?: string;
   commands?: Array<{ name: string; description: string; }>;
+  customPrompts?: Array<{ text: string; prompt: string; }>;
 }
 
-export function ChatWindow({ apiEndpoint = '/api/chat', customTheme, initialMessage, commands }: ChatWindowProps) {
+export function ChatWindow({ apiEndpoint = '/api/chat', customTheme, initialMessage, commands, customPrompts }: ChatWindowProps) {
   return (
     <ChatProvider initialMessage={initialMessage}>
-      <ChatWindowContent apiEndpoint={apiEndpoint} customTheme={customTheme} commands={commands} />
+      <ChatWindowContent apiEndpoint={apiEndpoint} customTheme={customTheme} commands={commands} customPrompts={customPrompts} />
     </ChatProvider>
   );
 }
 
-function ChatWindowContent({ apiEndpoint, customTheme, commands }: Omit<ChatWindowProps, 'initialMessage'>) {
+function ChatWindowContent({ apiEndpoint, customTheme, commands, customPrompts }: Omit<ChatWindowProps, 'initialMessage'>) {
   const { messages, error, isInitializing, sendMessage, isSnowing, matrixMode } = useChat();
   const [isTyping, setIsTyping] = useState(false);
   const lastMessageRef = useRef<HTMLDivElement>(null);
@@ -218,7 +219,12 @@ function ChatWindowContent({ apiEndpoint, customTheme, commands }: Omit<ChatWind
         zIndex={10}
       >
         <Box maxW="4xl" mx="auto" w="full" bg={theme.background} px={4}>
-          <SuggestedPrompts onPromptClick={handleSubmit} matrixMode={matrixMode} isDisabled={isTyping} />
+          <SuggestedPrompts 
+            onPromptClick={handleSubmit} 
+            matrixMode={matrixMode} 
+            isDisabled={isTyping}
+            customPrompts={customPrompts}
+          />
           <ChatInput 
             onSubmit={handleSubmit} 
             isDisabled={isTyping} 

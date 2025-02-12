@@ -4,9 +4,10 @@ interface SuggestedPromptsProps {
   onPromptClick: (prompt: string) => void;
   matrixMode?: boolean;
   isDisabled?: boolean;
+  customPrompts?: Array<{ text: string; prompt: string; }>;
 }
 
-const SUGGESTED_PROMPTS = [
+const DEFAULT_PROMPTS = [
   { 
     text: "AI Work Experience", 
     prompt: "Tell me about Jonathan's experience building AI-integrated applications at Paige and other companies?" 
@@ -33,7 +34,12 @@ const SUGGESTED_PROMPTS = [
   },
 ];
 
-export function SuggestedPrompts({ onPromptClick, matrixMode = false, isDisabled = false }: SuggestedPromptsProps) {
+export function SuggestedPrompts({ 
+  onPromptClick, 
+  matrixMode = false, 
+  isDisabled = false,
+  customPrompts
+}: SuggestedPromptsProps) {
   // Move hooks to top level
   const lightModeBg = useColorModeValue('gray.100', 'gray.700');
   const lightModeHoverBg = useColorModeValue('gray.200', 'gray.600');
@@ -43,13 +49,15 @@ export function SuggestedPrompts({ onPromptClick, matrixMode = false, isDisabled
   const buttonColor = matrixMode ? '#00FF00' : undefined;
   const buttonBorder = matrixMode ? '1px solid #00FF00' : undefined;
 
+  const activePrompts = customPrompts || DEFAULT_PROMPTS;
+
   return (
     <HStack spacing={2} py={2} px={4} overflowX="auto" css={{
       '&::-webkit-scrollbar': { height: '4px' },
       '&::-webkit-scrollbar-track': { background: 'transparent' },
       '&::-webkit-scrollbar-thumb': { background: matrixMode ? '#00FF00' : 'gray.200' },
     }}>
-      {SUGGESTED_PROMPTS.map((item) => (
+      {activePrompts.map((item) => (
         <Button
           key={item.text}
           size="sm"
